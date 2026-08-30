@@ -38,6 +38,28 @@ function cvToText(cv: CvContent): string {
   return parts.join("\n\n");
 }
 
+function cvKeywords(cv: CvContent): string[] {
+  const text = cvToText(cv).toLowerCase();
+  return text.split(/[^a-z0-9+]+/).filter((w) => w.length > 2);
+}
+
+// Cheap pre-filter: rank jobs by keyword overlap before spending API calls
+function preFilterJobs(cv: CvContent, jobs: Job[], limit: number): Job[] {
+  const keywords = new Set(cvKeywords(cv));
+
+  const scored = jobs.map((job) => {
+    const jobText = `${job.title} ${job.description}`.toLowerCase();
+    let overlap = 0;
+    for (const kw of keywords) {
+      if (jobText.includes(kw)) overlap++;
+    }
+    return { job, overlap };
+  });
+
+  scored.sort((a, b) => b.overlap - a.overlap);
+  return scored.slice(0, limit).map((s) => s.job);
+}
+
 export async function scoreJobMatch(cv: CvContent, job: Job): Promise<JobMatch> {
   const cvText = cvToText(cv);
 
@@ -75,7 +97,12 @@ Respond with ONLY a JSON object, no other text, in this exact format:
   }
 }
 
-export async function matchJobsForCv(cv: CvContent, jobs: Job[]): Promise<JobMatch[]> {
-  const results = await Promise.all(jobs.map((job) => scoreJobMatch(cv, job)));
+export async function matchJobsForCv(
+  cv: CvContent,
+  jobs: Job[],
+  scoreLimit = 15
+): Promise<JobMatch[]> {
+  const candidates = preFilterJobs(cv, jobs, scoreLimit);
+  const results = await Promise.all(candidates.map((job) => scoreJobMatch(cv, job)));
   return results.sort((a, b) => b.score - a.score);
 }
