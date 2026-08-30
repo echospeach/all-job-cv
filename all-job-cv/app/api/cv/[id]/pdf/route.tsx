@@ -23,7 +23,7 @@ export async function GET(
     <CvPdfDocument content={cv.content as any} />
   );
 
-  return new Response(buffer, {
+  return new Response(new Uint8Array(buffer), {
     headers: {
       "Content-Type": "application/pdf",
       "Content-Disposition": `attachment; filename="${cv.title.replace(/[^a-z0-9]/gi, "_")}.pdf"`,
