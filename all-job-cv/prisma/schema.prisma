@@ -65,6 +65,8 @@ model Cv {
   content   Json
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  matches   Json?
+  matchesAt DateTime?
 }
 
 model Job {
