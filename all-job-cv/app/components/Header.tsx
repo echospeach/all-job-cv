@@ -6,17 +6,17 @@ export default async function Header() {
 
   return (
     <header className="border-b border-[#D8D3C8] bg-[#F0EEE8]">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
         <Link href="/" className="text-sm font-semibold tracking-tight text-[#202A3C]">
           ALL JOB CV
         </Link>
 
         {session?.user ? (
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <Link href="/my-cvs" className="text-sm font-medium text-[#202A3C] hover:underline">
-              My CV
+              My CVs
             </Link>
-            <span className="text-sm text-[#8B8578]">{session.user.email}</span>
+            <span className="hidden text-sm text-[#8B8578] sm:inline">{session.user.email}</span>
             <form
               action={async () => {
                 "use server";
