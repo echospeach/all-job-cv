@@ -16,6 +16,7 @@ type Job = {
   company: string;
   description: string;
   location: string | null;
+  url: string | null;
 };
 
 export type JobMatch = {

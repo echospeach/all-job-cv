@@ -75,5 +75,6 @@ model Job {
   company     String
   description String
   location    String?
+  url         String?
   createdAt   DateTime @default(now())
 }

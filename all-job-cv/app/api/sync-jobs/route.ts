@@ -13,6 +13,7 @@ type AdzunaJob = {
   company: { display_name: string };
   location: { display_name: string };
   description: string;
+  redirect_url: string;
 };
 
 export async function POST() {
@@ -46,6 +47,7 @@ export async function POST() {
           company: job.company?.display_name ?? "Unknown",
           location: job.location?.display_name ?? null,
           description: job.description,
+          url: job.redirect_url ?? null,
         },
       });
       totalInserted++;
