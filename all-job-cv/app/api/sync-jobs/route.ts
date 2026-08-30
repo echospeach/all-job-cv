@@ -3,9 +3,21 @@ import { prisma } from "@/app/lib/prisma";
 
 const searchTerms = [
   "software developer",
+  "software engineer",
   "product designer",
+  "ux designer",
   "data analyst",
+  "data scientist",
   "marketing manager",
+  "project manager",
+  "customer service",
+  "sales executive",
+  "accountant",
+  "hr manager",
+  "graphic designer",
+  "operations manager",
+  "business analyst",
+  "devops engineer",
 ];
 
 type AdzunaJob = {
@@ -28,9 +40,10 @@ export async function POST() {
   }
 
   let totalInserted = 0;
+  let totalSkipped = 0;
 
   for (const term of searchTerms) {
-    const url = `https://api.adzuna.com/v1/api/jobs/gb/search/1?app_id=${appId}&app_key=${appKey}&results_per_page=10&what=${encodeURIComponent(
+    const url = `https://api.adzuna.com/v1/api/jobs/gb/search/1?app_id=${appId}&app_key=${appKey}&results_per_page=15&what=${encodeURIComponent(
       term
     )}&content-type=application/json`;
 
@@ -41,6 +54,15 @@ export async function POST() {
     const jobs: AdzunaJob[] = data.results ?? [];
 
     for (const job of jobs) {
+      const existing = await prisma.job.findFirst({
+        where: { title: job.title, company: job.company?.display_name },
+      });
+
+      if (existing) {
+        totalSkipped++;
+        continue;
+      }
+
       await prisma.job.create({
         data: {
           title: job.title,
@@ -54,5 +76,9 @@ export async function POST() {
     }
   }
 
-  return NextResponse.json({ message: "Jobs synced", count: totalInserted });
+  return NextResponse.json({
+    message: "Jobs synced",
+    inserted: totalInserted,
+    skippedDuplicates: totalSkipped,
+  });
 }
