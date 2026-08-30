@@ -3,6 +3,7 @@ import Link from "next/link";
 import { auth } from "@/app/lib/auth";
 import { prisma } from "@/app/lib/prisma";
 import { matchJobsForCv, type JobMatch } from "@/app/lib/matchJobs";
+import ApplyButton from "./ApplyButton";
 
 const CACHE_HOURS = 6;
 
@@ -37,6 +38,11 @@ export default async function MatchesPage({
       data: { matches: matches as any, matchesAt: new Date() },
     });
   }
+
+  const applications = await prisma.application.findMany({
+    where: { userId: session.user.id },
+  });
+  const appliedJobIds = new Set(applications.map((a) => a.jobId));
 
   return (
     <div className="min-h-screen bg-[#F0EEE8]">
@@ -82,6 +88,7 @@ export default async function MatchesPage({
                   View and apply
                 </a>
               )}
+              <ApplyButton jobId={m.job.id} cvId={cv.id} initiallyApplied={appliedJobIds.has(m.job.id)} />
             </div>
           ))}
         </div>

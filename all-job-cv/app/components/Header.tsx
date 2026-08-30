@@ -16,6 +16,9 @@ export default async function Header() {
             <Link href="/my-cvs" className="text-sm font-medium text-[#202A3C] hover:underline">
               My CVs
             </Link>
+            <Link href="/applications" className="text-sm font-medium text-[#202A3C] hover:underline">
+              Applications
+            </Link>
             <span className="hidden text-sm text-[#8B8578] sm:inline">{session.user.email}</span>
             <form
               action={async () => {
