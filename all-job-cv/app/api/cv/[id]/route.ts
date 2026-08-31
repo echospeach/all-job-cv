@@ -7,11 +7,11 @@ export async function PATCH(
 ) {
   const { id } = await params;
   const body = await request.json();
-  const { title, content } = body;
+  const { title, content, template } = body;
 
   const cv = await prisma.cv.update({
     where: { id },
-    data: { title, content },
+    data: { title, content, template },
   });
 
   return NextResponse.json(cv);

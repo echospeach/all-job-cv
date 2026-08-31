@@ -3,7 +3,7 @@ import { prisma } from "@/app/lib/prisma";
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { userId, title, content } = body;
+  const { userId, title, content, template } = body;
 
   if (!userId || !title || !content) {
     return NextResponse.json(
@@ -13,7 +13,7 @@ export async function POST(request: Request) {
   }
 
   const cv = await prisma.cv.create({
-    data: { userId, title, content },
+    data: { userId, title, content, template: template || "classic" },
   });
 
   return NextResponse.json(cv, { status: 201 });

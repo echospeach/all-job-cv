@@ -19,7 +19,7 @@ export default async function EditCvPage({
   return (
     <BuilderForm
       userId={session.user.id!}
-      existingCv={{ id: cv.id, title: cv.title, content: cv.content as any }}
+      existingCv={{ id: cv.id, title: cv.title, content: cv.content as any, template: cv.template }}
     />
   );
 }

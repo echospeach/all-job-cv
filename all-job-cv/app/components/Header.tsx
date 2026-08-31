@@ -13,6 +13,9 @@ export default async function Header() {
 
         {session?.user ? (
           <div className="flex items-center gap-2 sm:gap-4">
+            <Link href="/templates" className="text-sm font-medium text-[#202A3C] hover:underline">
+              Templates
+            </Link>
             <Link href="/my-cvs" className="text-sm font-medium text-[#202A3C] hover:underline">
               My CVs
             </Link>

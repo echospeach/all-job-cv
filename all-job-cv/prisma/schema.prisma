@@ -68,6 +68,7 @@ model Cv {
   updatedAt DateTime @updatedAt
   matches   Json?
   matchesAt DateTime?
+  template  String   @default("classic")
 }
 
 model Job {

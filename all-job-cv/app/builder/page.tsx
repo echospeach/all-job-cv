@@ -2,12 +2,17 @@ import { redirect } from "next/navigation";
 import { auth } from "@/app/lib/auth";
 import BuilderForm from "./BuilderForm";
 
-export default async function BuilderPage() {
+export default async function BuilderPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ template?: string }>;
+}) {
   const session = await auth();
-
   if (!session?.user) {
     redirect("/api/auth/signin");
   }
 
-  return <BuilderForm userId={session.user.id!} />;
+  const { template } = await searchParams;
+
+  return <BuilderForm userId={session.user.id!} initialTemplate={template} />;
 }
