@@ -5,13 +5,16 @@ import BuilderForm from "../BuilderForm";
 
 export default async function EditCvPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ premium?: string }>;
 }) {
   const session = await auth();
   if (!session?.user) redirect("/signin");
 
   const { id } = await params;
+  const { premium } = await searchParams;
   const cv = await prisma.cv.findUnique({ where: { id } });
 
   if (!cv || cv.userId !== session.user.id) notFound();
@@ -30,6 +33,7 @@ export default async function EditCvPage({
         paidUnlocked: cv.paidUnlocked,
       }}
       isSubscribed={isSubscribed}
+      openPaywallOnLoad={premium === "1"}
     />
   );
 }

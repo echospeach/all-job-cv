@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { CvContent, Experience, Education, Certificate } from "@/app/lib/cvTypes";
 import ClassicTemplate from "@/app/lib/templates/ClassicTemplate";
 import ModernTemplate from "@/app/lib/templates/ModernTemplate";
@@ -38,11 +38,13 @@ export default function BuilderForm({
   existingCv,
   initialTemplate,
   isSubscribed = false,
+  openPaywallOnLoad = false,
 }: {
   userId: string;
   existingCv?: ExistingCv;
   initialTemplate?: string;
   isSubscribed?: boolean;
+  openPaywallOnLoad?: boolean;
 }) {
   const c = existingCv?.content;
 
@@ -81,6 +83,12 @@ export default function BuilderForm({
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
   const [showPaywall, setShowPaywall] = useState(false);
+
+  useEffect(() => {
+    if (openPaywallOnLoad) {
+      setShowPaywall(true);
+    }
+  }, [openPaywallOnLoad]);
 
   async function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -125,7 +133,7 @@ export default function BuilderForm({
     const isPremiumTemplate = premiumTemplates.includes(template);
     const alreadyUnlocked = isSubscribed || existingCv?.paidUnlocked;
 
-    if (isPremiumTemplate && !alreadyUnlocked) {
+    if (isPremiumTemplate && !alreadyUnlocked && existingCv) {
       setShowPaywall(true);
       return;
     }
@@ -172,7 +180,8 @@ export default function BuilderForm({
         const created = await res.json();
         setSaving(false);
         setSaved(true);
-        window.location.href = `/builder/${created.id}`;
+        const isPrem = premiumTemplates.includes(template);
+        window.location.href = isPrem ? `/builder/${created.id}?premium=1` : `/builder/${created.id}`;
       }
     } catch {
       setError("Could not save your CV. Please check your connection and try again.");
@@ -208,7 +217,6 @@ export default function BuilderForm({
 
   return (
     <div className="min-h-screen bg-[#F0EEE8]">
-      <div style={{background: "yellow", padding: "8px", fontSize: "12px"}}>DEBUG: template={template} | isSubscribed={String(isSubscribed)} | paidUnlocked={String(existingCv?.paidUnlocked)} | isPremiumTemplate={String(premiumTemplates.includes(template))}</div>
       {showPaywall && existingCv && (
         <PaywallModal
           cvId={existingCv.id}
