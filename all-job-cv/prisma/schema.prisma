@@ -85,6 +85,7 @@ model Job {
   description String
   location    String?
   url         String?
+  country     String   @default("gb")
   createdAt   DateTime @default(now())
   applications Application[]
 }

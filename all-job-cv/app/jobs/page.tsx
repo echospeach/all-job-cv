@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ukLocations } from "@/app/lib/ukLocations";
+import { countries } from "@/app/lib/countries";
 
 type Job = {
   id: string;
@@ -11,6 +12,7 @@ type Job = {
   location: string | null;
   description: string;
   url: string | null;
+  country: string;
 };
 
 export default function JobsPage() {
@@ -19,17 +21,19 @@ export default function JobsPage() {
 
   const [keyword, setKeyword] = useState(searchParams.get("q") || "");
   const [location, setLocation] = useState(searchParams.get("location") || "");
+  const [country, setCountry] = useState(searchParams.get("country") || "gb");
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const fetchJobs = useCallback(async (q: string, loc: string) => {
+  const fetchJobs = useCallback(async (q: string, loc: string, c: string) => {
     setLoading(true);
     setError("");
     try {
       const params = new URLSearchParams();
       if (q) params.set("q", q);
       if (loc) params.set("location", loc);
+      if (c) params.set("country", c);
       const res = await fetch(`/api/jobs/search?${params.toString()}`);
       if (!res.ok) throw new Error("failed");
       const data = await res.json();
@@ -41,7 +45,11 @@ export default function JobsPage() {
   }, []);
 
   useEffect(() => {
-    fetchJobs(searchParams.get("q") || "", searchParams.get("location") || "");
+    fetchJobs(
+      searchParams.get("q") || "",
+      searchParams.get("location") || "",
+      searchParams.get("country") || "gb"
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -50,9 +58,12 @@ export default function JobsPage() {
     const params = new URLSearchParams();
     if (keyword) params.set("q", keyword);
     if (location) params.set("location", location);
+    if (country) params.set("country", country);
     router.push(`/jobs?${params.toString()}`);
-    fetchJobs(keyword, location);
+    fetchJobs(keyword, location, country);
   }
+
+  const countryLabel = countries.find((c) => c.code === country)?.label || "";
 
   return (
     <div className="min-h-screen bg-[#F0EEE8]">
@@ -63,6 +74,17 @@ export default function JobsPage() {
         <h1 className="mb-6 text-2xl font-semibold text-[#202A3C]">Find your next role</h1>
 
         <form onSubmit={handleSearch} className="mb-8 flex flex-col gap-3 sm:flex-row">
+          <select
+            value={country}
+            onChange={(e) => setCountry(e.target.value)}
+            className="input sm:w-40"
+          >
+            {countries.map((c) => (
+              <option key={c.code} value={c.code}>
+                {c.label}
+              </option>
+            ))}
+          </select>
           <input
             className="input flex-1"
             placeholder="Job title or keyword"
@@ -94,7 +116,9 @@ export default function JobsPage() {
 
         {!loading && !error && jobs.length === 0 && (
           <div className="rounded-lg border border-dashed border-[#D8D3C8] bg-white px-6 py-16 text-center">
-            <p className="text-[15px] text-[#5C5A52]">No jobs found. Try a different search.</p>
+            <p className="text-[15px] text-[#5C5A52]">
+              No jobs found in {countryLabel}. Try a different search.
+            </p>
           </div>
         )}
 

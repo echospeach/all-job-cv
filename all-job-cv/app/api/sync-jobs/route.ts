@@ -20,6 +20,8 @@ const searchTerms = [
   "devops engineer",
 ];
 
+const countries = ["gb", "us", "ca", "au"];
+
 type AdzunaJob = {
   title: string;
   company: { display_name: string };
@@ -27,6 +29,11 @@ type AdzunaJob = {
   description: string;
   redirect_url: string;
 };
+
+function isAuthorized(request: Request): boolean {
+  const authHeader = request.headers.get("authorization");
+  return authHeader === `Bearer ${process.env.CRON_SECRET}`;
+}
 
 async function runSync() {
   const appId = process.env.ADZUNA_APP_ID;
@@ -42,37 +49,40 @@ async function runSync() {
   let totalInserted = 0;
   let totalSkipped = 0;
 
-  for (const term of searchTerms) {
-    const url = `https://api.adzuna.com/v1/api/jobs/gb/search/1?app_id=${appId}&app_key=${appKey}&results_per_page=15&what=${encodeURIComponent(
-      term
-    )}&content-type=application/json`;
+  for (const country of countries) {
+    for (const term of searchTerms) {
+      const url = `https://api.adzuna.com/v1/api/jobs/${country}/search/1?app_id=${appId}&app_key=${appKey}&results_per_page=10&what=${encodeURIComponent(
+        term
+      )}&content-type=application/json`;
 
-    const res = await fetch(url);
-    if (!res.ok) continue;
+      const res = await fetch(url);
+      if (!res.ok) continue;
 
-    const data = await res.json();
-    const jobs: AdzunaJob[] = data.results ?? [];
+      const data = await res.json();
+      const jobs: AdzunaJob[] = data.results ?? [];
 
-    for (const job of jobs) {
-      const existing = await prisma.job.findFirst({
-        where: { title: job.title, company: job.company?.display_name },
-      });
+      for (const job of jobs) {
+        const existing = await prisma.job.findFirst({
+          where: { title: job.title, company: job.company?.display_name, country },
+        });
 
-      if (existing) {
-        totalSkipped++;
-        continue;
+        if (existing) {
+          totalSkipped++;
+          continue;
+        }
+
+        await prisma.job.create({
+          data: {
+            title: job.title,
+            company: job.company?.display_name ?? "Unknown",
+            location: job.location?.display_name ?? null,
+            description: job.description,
+            url: job.redirect_url ?? null,
+            country,
+          },
+        });
+        totalInserted++;
       }
-
-      await prisma.job.create({
-        data: {
-          title: job.title,
-          company: job.company?.display_name ?? "Unknown",
-          location: job.location?.display_name ?? null,
-          description: job.description,
-          url: job.redirect_url ?? null,
-        },
-      });
-      totalInserted++;
     }
   }
 
@@ -81,11 +91,6 @@ async function runSync() {
     inserted: totalInserted,
     skippedDuplicates: totalSkipped,
   });
-}
-
-function isAuthorized(request: Request): boolean {
-  const authHeader = request.headers.get("authorization");
-  return authHeader === `Bearer ${process.env.CRON_SECRET}`;
 }
 
 export async function GET(request: Request) {

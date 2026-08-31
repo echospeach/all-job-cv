@@ -5,6 +5,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const keyword = searchParams.get("q") || "";
   const location = searchParams.get("location") || "";
+  const country = searchParams.get("country") || "";
 
   const jobs = await prisma.job.findMany({
     where: {
@@ -19,6 +20,7 @@ export async function GET(request: Request) {
             }
           : {},
         location ? { location: { contains: location, mode: "insensitive" } } : {},
+        country ? { country } : {},
       ],
     },
     orderBy: { createdAt: "desc" },
