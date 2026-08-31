@@ -49,6 +49,7 @@ export default function BuilderForm({
   );
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState("");
 
   function updateExperience(index: number, field: keyof Experience, value: string) {
     setExperience((prev) =>
@@ -65,6 +66,7 @@ export default function BuilderForm({
     setSaved(false);
     const content = { name, title, email, summary, skills, experience };
 
+    setError("");
     try {
       if (existingCv) {
         const res = await fetch(`/api/cv/${existingCv.id}`, {
@@ -72,7 +74,6 @@ export default function BuilderForm({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ title: title || "Untitled CV", content }),
         });
-        console.log("PATCH status:", res.status);
         setSaving(false);
         setSaved(true);
       } else {
@@ -81,15 +82,13 @@ export default function BuilderForm({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ userId, title: title || "Untitled CV", content }),
         });
-        console.log("POST status:", res.status);
         const created = await res.json();
-        console.log("Created CV id:", created.id);
         setSaving(false);
         setSaved(true);
         window.location.href = `/builder/${created.id}`;
       }
     } catch (err) {
-      console.error("Save failed:", err);
+      setError("Could not save your CV. Please check your connection and try again.");
       setSaving(false);
     }
   }
@@ -155,6 +154,11 @@ export default function BuilderForm({
             >
               {saving ? "Saving…" : saved ? "Saved" : "Save CV"}
             </button>
+            {error && (
+              <div className="mt-3 rounded-lg border border-[#D97757]/30 bg-[#FBEDE7] px-4 py-3 text-sm text-[#993C1D]">
+                {error}
+              </div>
+            )}
           </div>
         </div>
 
