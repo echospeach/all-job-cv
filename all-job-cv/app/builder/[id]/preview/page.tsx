@@ -1,6 +1,6 @@
-import { redirect, notFound } from "next/navigation";
+import { notFound } from "next/navigation";
 import Link from "next/link";
-import { auth } from "@/app/lib/auth";
+import { requireUser } from "@/app/lib/getSessionUser";
 import { prisma } from "@/app/lib/prisma";
 import ClassicTemplate from "@/app/lib/templates/ClassicTemplate";
 import ModernTemplate from "@/app/lib/templates/ModernTemplate";
@@ -14,12 +14,11 @@ export default async function PreviewPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const session = await auth();
-  if (!session?.user) redirect("/api/auth/signin");
+  const sessionUser = await requireUser();
 
   const { id } = await params;
   const cv = await prisma.cv.findUnique({ where: { id } });
-  if (!cv || cv.userId !== session.user.id) notFound();
+  if (!cv || cv.userId !== sessionUser.id) notFound();
 
   const content = cv.content as any;
   const template = cv.template || "classic";

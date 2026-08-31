@@ -1,15 +1,14 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { auth } from "@/app/lib/auth";
+import { requireUser } from "@/app/lib/getSessionUser";
 import { prisma } from "@/app/lib/prisma";
 import DeleteCvButton from "./DeleteCvButton";
 
 export default async function MyCvsPage() {
-  const session = await auth();
-  if (!session?.user) redirect("/api/auth/signin");
+  const sessionUser = await requireUser();
 
   const cvs = await prisma.cv.findMany({
-    where: { userId: session.user.id },
+    where: { userId: sessionUser.id },
     orderBy: { updatedAt: "desc" },
   });
 

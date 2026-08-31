@@ -1,5 +1,5 @@
-import { redirect, notFound } from "next/navigation";
-import { auth } from "@/app/lib/auth";
+import { notFound } from "next/navigation";
+import { requireUser } from "@/app/lib/getSessionUser";
 import { prisma } from "@/app/lib/prisma";
 import BuilderForm from "../BuilderForm";
 
@@ -10,21 +10,20 @@ export default async function EditCvPage({
   params: Promise<{ id: string }>;
   searchParams: Promise<{ premium?: string }>;
 }) {
-  const session = await auth();
-  if (!session?.user) redirect("/signin");
+  const sessionUser = await requireUser();
 
   const { id } = await params;
   const { premium } = await searchParams;
   const cv = await prisma.cv.findUnique({ where: { id } });
 
-  if (!cv || cv.userId !== session.user.id) notFound();
+  if (!cv || cv.userId !== sessionUser.id) notFound();
 
-  const user = await prisma.user.findUnique({ where: { id: session.user.id } });
+  const user = await prisma.user.findUnique({ where: { id: sessionUser.id } });
   const isSubscribed = user?.subscriptionStatus === "active";
 
   return (
     <BuilderForm
-      userId={session.user.id!}
+      userId={sessionUser.id}
       existingCv={{
         id: cv.id,
         title: cv.title,

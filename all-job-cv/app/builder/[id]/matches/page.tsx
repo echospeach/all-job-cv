@@ -1,6 +1,6 @@
-import { redirect, notFound } from "next/navigation";
+import { notFound } from "next/navigation";
 import Link from "next/link";
-import { auth } from "@/app/lib/auth";
+import { requireUser } from "@/app/lib/getSessionUser";
 import { prisma } from "@/app/lib/prisma";
 import { matchJobsForCv, type JobMatch } from "@/app/lib/matchJobs";
 import ApplyButton from "./ApplyButton";
@@ -14,13 +14,12 @@ export default async function MatchesPage({
   params: Promise<{ id: string }>;
   searchParams: Promise<{ refresh?: string }>;
 }) {
-  const session = await auth();
-  if (!session?.user) redirect("/api/auth/signin");
+  const sessionUser = await requireUser();
 
   const { id } = await params;
   const { refresh } = await searchParams;
   const cv = await prisma.cv.findUnique({ where: { id } });
-  if (!cv || cv.userId !== session.user.id) notFound();
+  if (!cv || cv.userId !== sessionUser.id) notFound();
 
   const isStale =
     !cv.matchesAt ||
@@ -40,7 +39,7 @@ export default async function MatchesPage({
   }
 
   const applications = await prisma.application.findMany({
-    where: { userId: session.user.id },
+    where: { userId: sessionUser.id },
   });
   const appliedJobIds = new Set(applications.map((a) => a.jobId));
 

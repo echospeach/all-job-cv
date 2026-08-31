@@ -1,13 +1,12 @@
 import { redirect } from "next/navigation";
-import { auth } from "@/app/lib/auth";
+import { requireUser } from "@/app/lib/getSessionUser";
 import { prisma } from "@/app/lib/prisma";
 import SubscribeButton from "./SubscribeButton";
 
 export default async function AccountPage() {
-  const session = await auth();
-  if (!session?.user) redirect("/signin");
+  const sessionUser = await requireUser();
 
-  const user = await prisma.user.findUnique({ where: { id: session.user.id } });
+  const user = await prisma.user.findUnique({ where: { id: sessionUser.id } });
   const isActive = user?.subscriptionStatus === "active";
 
   return (

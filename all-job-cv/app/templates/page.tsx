@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { auth } from "@/app/lib/auth";
+import { requireUser } from "@/app/lib/getSessionUser";
 import { sampleCv } from "@/app/lib/sampleCv";
 import ClassicTemplate from "@/app/lib/templates/ClassicTemplate";
 import ModernTemplate from "@/app/lib/templates/ModernTemplate";
@@ -22,8 +22,7 @@ const PAGE_W = 794;
 const SCALE = 0.34;
 
 export default async function TemplatesPage() {
-  const session = await auth();
-  if (!session?.user) redirect("/api/auth/signin");
+  await requireUser();
 
   return (
     <div className="min-h-screen bg-[#F0EEE8]">

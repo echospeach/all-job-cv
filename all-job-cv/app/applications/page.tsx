@@ -1,14 +1,13 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { auth } from "@/app/lib/auth";
+import { requireUser } from "@/app/lib/getSessionUser";
 import { prisma } from "@/app/lib/prisma";
 
 export default async function ApplicationsPage() {
-  const session = await auth();
-  if (!session?.user) redirect("/api/auth/signin");
+  const sessionUser = await requireUser();
 
   const applications = await prisma.application.findMany({
-    where: { userId: session.user.id },
+    where: { userId: sessionUser.id },
     include: { job: true },
     orderBy: { appliedAt: "desc" },
   });
