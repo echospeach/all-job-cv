@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { ukLocations } from "@/app/lib/ukLocations";
+import { locationsByCountry } from "@/app/lib/locationsByCountry";
 import { countries } from "@/app/lib/countries";
 
 type Job = {
@@ -108,7 +108,7 @@ export default function JobsPage() {
                 onChange={(e) => setLocation(e.target.value)}
               />
               <datalist id="uk-locations">
-                {ukLocations.map((loc) => (
+                {(locationsByCountry[country] || []).map((loc) => (
                   <option key={loc} value={loc} />
                 ))}
               </datalist>

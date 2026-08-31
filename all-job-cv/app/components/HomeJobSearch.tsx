@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ukLocations } from "@/app/lib/ukLocations";
+import { locationsByCountry } from "@/app/lib/locationsByCountry";
 import { countries } from "@/app/lib/countries";
 
 export default function HomeJobSearch() {
@@ -59,7 +59,7 @@ export default function HomeJobSearch() {
             onChange={(e) => setLocation(e.target.value)}
           />
           <datalist id="uk-locations">
-            {ukLocations.map((loc) => (
+            {(locationsByCountry[country] || []).map((loc) => (
               <option key={loc} value={loc} />
             ))}
           </datalist>
