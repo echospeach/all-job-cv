@@ -7,10 +7,14 @@ export default async function Header() {
   return (
     <header className="border-b border-[#D8D3C8] bg-[#F0EEE8]">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
-        <Link href="/" className="text-sm font-semibold tracking-tight text-[#202A3C]">
-          ALL JOB CV
-        </Link>
-
+        <div className="flex items-center gap-6">
+          <Link href="/" className="text-sm font-semibold tracking-tight text-[#202A3C]">
+            ALL JOB CV
+          </Link>
+          <Link href="/jobs" className="text-sm font-medium text-[#202A3C] hover:underline">
+            Find Jobs
+          </Link>
+        </div>
         {session?.user ? (
           <div className="flex items-center gap-2 sm:gap-4">
             <Link href="/templates" className="text-sm font-medium text-[#202A3C] hover:underline">
