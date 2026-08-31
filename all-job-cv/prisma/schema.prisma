@@ -112,3 +112,10 @@ model Purchase {
   amount            Int
   createdAt         DateTime @default(now())
 }
+
+model RateLimit {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  count       Int      @default(1)
+  windowStart DateTime @default(now())
+}

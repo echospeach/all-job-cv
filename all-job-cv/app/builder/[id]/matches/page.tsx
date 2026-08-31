@@ -3,6 +3,7 @@ import Link from "next/link";
 import { requireUser } from "@/app/lib/getSessionUser";
 import { prisma } from "@/app/lib/prisma";
 import { matchJobsForCv, type JobMatch } from "@/app/lib/matchJobs";
+import { checkRateLimit } from "@/app/lib/rateLimit";
 import ApplyButton from "./ApplyButton";
 
 const CACHE_HOURS = 6;
@@ -26,16 +27,24 @@ export default async function MatchesPage({
     Date.now() - new Date(cv.matchesAt).getTime() > CACHE_HOURS * 60 * 60 * 1000;
 
   let matches: JobMatch[];
+  let rateLimited = false;
 
   if (cv.matches && !isStale && refresh !== "1") {
     matches = cv.matches as unknown as JobMatch[];
   } else {
-    const jobs = await prisma.job.findMany();
-    matches = await matchJobsForCv(cv.content as any, jobs);
-    await prisma.cv.update({
-      where: { id: cv.id },
-      data: { matches: matches as any, matchesAt: new Date() },
-    });
+    const { allowed } = await checkRateLimit(`matches-refresh:${sessionUser.id}`, 10, 60 * 60);
+
+    if (!allowed) {
+      rateLimited = true;
+      matches = cv.matches ? (cv.matches as unknown as JobMatch[]) : [];
+    } else {
+      const jobs = await prisma.job.findMany();
+      matches = await matchJobsForCv(cv.content as any, jobs);
+      await prisma.cv.update({
+        where: { id: cv.id },
+        data: { matches: matches as any, matchesAt: new Date() },
+      });
+    }
   }
 
   const applications = await prisma.application.findMany({
@@ -63,6 +72,12 @@ export default async function MatchesPage({
         <Link href={"/builder/" + cv.id} className="text-sm text-[#8B8578] hover:underline">
           Back to CV
         </Link>
+
+        {rateLimited && (
+          <div className="mt-4 rounded-lg border border-[#D97757]/30 bg-[#FBEDE7] px-4 py-3 text-sm text-[#993C1D]">
+            You have refreshed matches a lot recently. Showing your last saved results - try again in a bit.
+          </div>
+        )}
 
         <div className="mt-8 space-y-3">
           {matches.map((m) => (

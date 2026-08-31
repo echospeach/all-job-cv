@@ -1,8 +1,19 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/app/lib/prisma";
+import { checkRateLimit } from "@/app/lib/rateLimit";
 
 export async function POST(request: Request) {
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
+  const { allowed } = await checkRateLimit(`signup:${ip}`, 5, 60 * 60);
+
+  if (!allowed) {
+    return NextResponse.json(
+      { error: "Too many sign-up attempts. Please try again later." },
+      { status: 429 }
+    );
+  }
+
   const body = await request.json();
   const { email, password, name } = body;
 

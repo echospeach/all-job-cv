@@ -1,11 +1,20 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/app/lib/auth";
 import { supabaseAdmin } from "@/app/lib/supabaseAdmin";
+import { checkRateLimit } from "@/app/lib/rateLimit";
 
 export async function POST(request: Request) {
   const session = await auth();
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { allowed } = await checkRateLimit(`upload-photo:${session.user.id}`, 10, 60 * 60);
+  if (!allowed) {
+    return NextResponse.json(
+      { error: "Too many uploads. Please try again later." },
+      { status: 429 }
+    );
   }
 
   const formData = await request.formData();
