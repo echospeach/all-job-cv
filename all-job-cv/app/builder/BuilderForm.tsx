@@ -9,6 +9,7 @@ import MinimalTemplate from "@/app/lib/templates/MinimalTemplate";
 import ProfileTemplate from "@/app/lib/templates/ProfileTemplate";
 import CompactTemplate from "@/app/lib/templates/CompactTemplate";
 import SidebarTemplate from "@/app/lib/templates/SidebarTemplate";
+import TemplatePicker from "./TemplatePicker";
 import PaywallModal from "./[id]/PaywallModal";
 
 type ExistingCv = {
@@ -245,25 +246,7 @@ export default function BuilderForm({
           )}
 
           <div className="space-y-5">
-            <div id="template">
-              <label className="mb-1.5 block text-sm font-medium text-[#202A3C]">Template</label>
-              <div className="flex flex-wrap gap-2">
-                {templates.map((t) => (
-                  <button
-                    key={t.id}
-                    type="button"
-                    onClick={() => setTemplate(t.id)}
-                    className={
-                      template === t.id
-                        ? "rounded-lg border border-[#202A3C] bg-[#202A3C] px-3 py-1.5 text-sm font-medium text-white"
-                        : "rounded-lg border border-[#D8D3C8] bg-white px-3 py-1.5 text-sm font-medium text-[#202A3C] hover:bg-[#F0EEE8]"
-                    }
-                  >
-                    {t.label}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <TemplatePicker value={template} onChange={setTemplate} />
 
             <Field label="Full name">
               <input className="input" value={name} onChange={(e) => setName(e.target.value)} placeholder="Jane Doe" />
