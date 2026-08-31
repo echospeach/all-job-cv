@@ -10,12 +10,19 @@ export default function SignUpPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [agreed, setAgreed] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function handleSignUp(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+
+    if (!agreed) {
+      setError("Please agree to the Terms of Service and Privacy Policy to continue.");
+      return;
+    }
+
     setLoading(true);
 
     const res = await fetch("/api/signup", {
@@ -42,14 +49,41 @@ export default function SignUpPage() {
     }
   }
 
+  function handleGoogleSignUp() {
+    if (!agreed) {
+      setError("Please agree to the Terms of Service and Privacy Policy to continue.");
+      return;
+    }
+    signIn("google", { callbackUrl: "/builder" });
+  }
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#F0EEE8] px-6">
       <div className="w-full max-w-sm rounded-lg border border-[#D8D3C8] bg-white p-8">
         <h1 className="mb-1 text-xl font-semibold text-[#202A3C]">Create your account</h1>
         <p className="mb-6 text-sm text-[#8B8578]">Start building your CV in minutes.</p>
 
+        <label className="mb-4 flex items-start gap-2 text-sm text-[#5C5A52]">
+          <input
+            type="checkbox"
+            checked={agreed}
+            onChange={(e) => setAgreed(e.target.checked)}
+            className="mt-0.5 h-4 w-4 rounded border-[#D8D3C8] accent-[#3F6C51]"
+          />
+          <span>
+            I agree to the{" "}
+            <Link href="/terms" target="_blank" className="font-medium text-[#3F6C51] hover:underline">
+              Terms of Service
+            </Link>{" "}
+            and{" "}
+            <Link href="/privacy" target="_blank" className="font-medium text-[#3F6C51] hover:underline">
+              Privacy Policy
+            </Link>
+          </span>
+        </label>
+
         <button
-          onClick={() => signIn("google", { callbackUrl: "/builder" })}
+          onClick={handleGoogleSignUp}
           className="mb-4 w-full rounded-lg border border-[#D8D3C8] px-4 py-2.5 text-sm font-medium text-[#202A3C] hover:bg-[#F0EEE8]"
         >
           Continue with Google
