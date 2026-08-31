@@ -50,7 +50,7 @@ export default async function MyCvsPage() {
               return (
                 <div
                   key={cv.id}
-                  className="flex items-center justify-between rounded-lg border border-[#D8D3C8] bg-white px-5 py-4"
+                  className="flex flex-col gap-3 rounded-lg border border-[#D8D3C8] bg-white px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div>
                     <p className="text-[15px] font-semibold text-[#202A3C]">{cv.title}</p>
@@ -62,7 +62,7 @@ export default async function MyCvsPage() {
                       Updated {new Date(cv.updatedAt).toLocaleDateString()}
                     </p>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-wrap items-center gap-3">
                     <Link
                       href={`/builder/${cv.id}`}
                       className="rounded-lg border border-[#D8D3C8] px-3 py-1.5 text-sm font-medium text-[#202A3C] hover:bg-[#F0EEE8]"
