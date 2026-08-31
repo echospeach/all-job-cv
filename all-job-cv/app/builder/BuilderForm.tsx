@@ -11,6 +11,7 @@ import CompactTemplate from "@/app/lib/templates/CompactTemplate";
 import SidebarTemplate from "@/app/lib/templates/SidebarTemplate";
 import TemplatePicker from "./TemplatePicker";
 import TemplateGallery from "./TemplateGallery";
+import BulletEditor from "./BulletEditor";
 import PaywallModal from "./[id]/PaywallModal";
 
 type ExistingCv = {
@@ -343,11 +344,9 @@ export default function BuilderForm({
                     <input className="input mb-2" value={exp.role} onChange={(e) => updateExperience(i, "role", e.target.value)} placeholder="Role" />
                     <input className="input mb-2" value={exp.company} onChange={(e) => updateExperience(i, "company", e.target.value)} placeholder="Company" />
                     <input className="input mb-2" value={exp.dates} onChange={(e) => updateExperience(i, "dates", e.target.value)} placeholder="2022 - Present" />
-                    <textarea
-                      className="input min-h-[70px]"
+                    <BulletEditor
                       value={exp.description}
-                      onChange={(e) => updateExperience(i, "description", e.target.value)}
-                      placeholder="What did you do? One point per line works best."
+                      onChange={(val) => updateExperience(i, "description", val)}
                     />
                   </div>
                 ))}
