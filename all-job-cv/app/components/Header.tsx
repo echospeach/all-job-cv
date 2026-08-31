@@ -6,9 +6,7 @@ export default async function Header() {
   const session = await auth();
 
   const signedInItems = [
-    { href: "/jobs", label: "Find Jobs" },
     { href: "/templates", label: "Templates" },
-    { href: "/my-cvs", label: "My CVs" },
     { href: "/applications", label: "Applications" },
     { href: "/account", label: "Account" },
   ];
@@ -30,9 +28,14 @@ export default async function Header() {
           <Link href="/" className="text-sm font-semibold tracking-tight text-[#202A3C]">
             ALL JOB CV
           </Link>
-          <Link href="/jobs" className="hidden text-sm font-medium text-[#202A3C] hover:underline sm:inline">
+          <Link href="/jobs" className="text-sm font-medium text-[#202A3C] hover:underline">
             Find Jobs
           </Link>
+          {session?.user && (
+            <Link href="/my-cvs" className="text-sm font-medium text-[#202A3C] hover:underline sm:hidden">
+              My CVs
+            </Link>
+          )}
         </div>
 
         {/* Desktop nav */}
