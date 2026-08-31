@@ -13,6 +13,7 @@ type Job = {
   description: string;
   url: string | null;
   country: string;
+  sponsorsVisa: boolean;
 };
 
 export default function JobsPage() {
@@ -22,11 +23,12 @@ export default function JobsPage() {
   const [keyword, setKeyword] = useState(searchParams.get("q") || "");
   const [location, setLocation] = useState(searchParams.get("location") || "");
   const [country, setCountry] = useState(searchParams.get("country") || "gb");
+  const [sponsorship, setSponsorship] = useState(searchParams.get("sponsorship") === "1");
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const fetchJobs = useCallback(async (q: string, loc: string, c: string) => {
+  const fetchJobs = useCallback(async (q: string, loc: string, c: string, s: boolean) => {
     setLoading(true);
     setError("");
     try {
@@ -34,6 +36,7 @@ export default function JobsPage() {
       if (q) params.set("q", q);
       if (loc) params.set("location", loc);
       if (c) params.set("country", c);
+      if (s) params.set("sponsorship", "1");
       const res = await fetch(`/api/jobs/search?${params.toString()}`);
       if (!res.ok) throw new Error("failed");
       const data = await res.json();
@@ -48,7 +51,8 @@ export default function JobsPage() {
     fetchJobs(
       searchParams.get("q") || "",
       searchParams.get("location") || "",
-      searchParams.get("country") || "gb"
+      searchParams.get("country") || "gb",
+      searchParams.get("sponsorship") === "1"
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -59,8 +63,9 @@ export default function JobsPage() {
     if (keyword) params.set("q", keyword);
     if (location) params.set("location", location);
     if (country) params.set("country", country);
+    if (sponsorship) params.set("sponsorship", "1");
     router.push(`/jobs?${params.toString()}`);
-    fetchJobs(keyword, location, country);
+    fetchJobs(keyword, location, country, sponsorship);
   }
 
   const countryLabel = countries.find((c) => c.code === country)?.label || "";
@@ -122,6 +127,16 @@ export default function JobsPage() {
               </button>
             </div>
           </div>
+
+          <label className="mt-4 flex items-center gap-2 text-sm text-[#202A3C]">
+            <input
+              type="checkbox"
+              checked={sponsorship}
+              onChange={(e) => setSponsorship(e.target.checked)}
+              className="h-4 w-4 rounded border-[#D8D3C8] accent-[#3F6C51]"
+            />
+            Only show jobs that mention visa sponsorship
+          </label>
         </form>
 
         {loading && <p className="text-sm text-[#8B8578]">Loading jobs...</p>}
@@ -138,7 +153,7 @@ export default function JobsPage() {
         <div className="space-y-3">
           {jobs.map((job) => (
             <div key={job.id} className="rounded-lg border border-[#D8D3C8] bg-white p-5">
-              <div className="flex items-start justify-between">
+              <div className="flex items-start justify-between gap-3">
                 <div>
                   <p className="text-[15px] font-semibold text-[#202A3C]">{job.title}</p>
                   <p className="text-sm text-[#8B8578]">
@@ -146,6 +161,11 @@ export default function JobsPage() {
                     {job.location ? ` - ${job.location}` : ""}
                   </p>
                 </div>
+                {job.sponsorsVisa && (
+                  <span className="shrink-0 rounded-full bg-[#EAF3DE] px-2.5 py-1 text-xs font-medium text-[#3F6C51]">
+                    Visa sponsorship
+                  </span>
+                )}
               </div>
               <p className="mt-3 text-sm leading-relaxed text-[#5C5A52] line-clamp-3">
                 {job.description}

@@ -30,6 +30,25 @@ type AdzunaJob = {
   redirect_url: string;
 };
 
+const sponsorshipKeywords = [
+  "visa sponsorship",
+  "sponsor visa",
+  "sponsorship available",
+  "sponsorship license",
+  "sponsorship licence",
+  "skilled worker visa",
+  "will sponsor",
+  "visa sponsor",
+  "h-1b",
+  "h1b sponsorship",
+  "relocation and visa",
+];
+
+function detectSponsorship(description: string): boolean {
+  const lower = description.toLowerCase();
+  return sponsorshipKeywords.some((kw) => lower.includes(kw));
+}
+
 function isAuthorized(request: Request): boolean {
   const authHeader = request.headers.get("authorization");
   return authHeader === `Bearer ${process.env.CRON_SECRET}`;
@@ -78,6 +97,7 @@ async function runSync() {
             location: job.location?.display_name ?? null,
             description: job.description,
             url: job.redirect_url ?? null,
+            sponsorsVisa: detectSponsorship(job.description),
             country,
           },
         });
