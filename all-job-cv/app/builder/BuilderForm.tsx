@@ -10,6 +10,7 @@ import ProfileTemplate from "@/app/lib/templates/ProfileTemplate";
 import CompactTemplate from "@/app/lib/templates/CompactTemplate";
 import SidebarTemplate from "@/app/lib/templates/SidebarTemplate";
 import TemplatePicker from "./TemplatePicker";
+import TemplateGallery from "./TemplateGallery";
 import PaywallModal from "./[id]/PaywallModal";
 
 type ExistingCv = {
@@ -80,6 +81,7 @@ export default function BuilderForm({
   );
 
   const [template, setTemplate] = useState(existingCv?.template ?? initialTemplate ?? "classic");
+  const [templateChosen, setTemplateChosen] = useState(Boolean(existingCv || initialTemplate));
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
@@ -215,6 +217,19 @@ export default function BuilderForm({
   const showEducationBlock = ["profile", "compact", "sidebar"].includes(template);
   const showCertificates = template === "sidebar";
   const showHobbies = ["profile", "compact"].includes(template);
+
+  if (!templateChosen) {
+    return (
+      <div className="min-h-screen bg-[#F0EEE8]">
+        <div className="mx-auto max-w-6xl px-6 py-12">
+          <p className="mb-1 text-xs font-medium uppercase tracking-widest text-[#3F6C51]">Step 1 of 2</p>
+          <h1 className="mb-2 text-2xl font-semibold text-[#202A3C]">Choose a template</h1>
+          <p className="mb-10 max-w-xl text-sm text-[#5C5A52]">Pick a starting look for your CV. You can change this anytime while editing.</p>
+          <TemplateGallery selected={template} onSelect={(id) => { setTemplate(id); setTemplateChosen(true); }} />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#F0EEE8]">
