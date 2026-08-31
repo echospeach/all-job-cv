@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { ukLocations } from "@/app/lib/ukLocations";
 
 export default function HomeJobSearch() {
   const router = useRouter();
@@ -30,9 +31,15 @@ export default function HomeJobSearch() {
       <input
         className="input flex-1 border-none focus:shadow-none sm:border-l sm:border-[#D8D3C8] sm:pl-4"
         placeholder="Location"
+        list="uk-locations"
         value={location}
         onChange={(e) => setLocation(e.target.value)}
       />
+      <datalist id="uk-locations">
+        {ukLocations.map((loc) => (
+          <option key={loc} value={loc} />
+        ))}
+      </datalist>
       <button
         type="submit"
         className="rounded-lg bg-[#3F6C51] px-6 py-2.5 text-sm font-medium text-white hover:bg-[#345A44]"

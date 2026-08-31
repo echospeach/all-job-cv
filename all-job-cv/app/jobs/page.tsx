@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { ukLocations } from "@/app/lib/ukLocations";
 
 type Job = {
   id: string;
@@ -71,9 +72,15 @@ export default function JobsPage() {
           <input
             className="input flex-1"
             placeholder="Location, e.g. Manchester"
+            list="uk-locations"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
           />
+          <datalist id="uk-locations">
+            {ukLocations.map((loc) => (
+              <option key={loc} value={loc} />
+            ))}
+          </datalist>
           <button
             type="submit"
             className="rounded-lg bg-[#202A3C] px-6 py-2.5 text-sm font-medium text-white hover:bg-[#2C3B52]"
