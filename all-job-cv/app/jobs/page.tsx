@@ -107,12 +107,7 @@ export default function JobsPage() {
                 {job.description}
               </p>
               {job.url && (
-                
-                  href={job.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-3 inline-block rounded-lg bg-[#3F6C51] px-4 py-2 text-sm font-medium text-white hover:bg-[#345A44]"
-                >
+                <a href={job.url} target="_blank" rel="noopener noreferrer" className="mt-3 inline-block rounded-lg bg-[#3F6C51] px-4 py-2 text-sm font-medium text-white hover:bg-[#345A44]">
                   View and apply
                 </a>
               )}
