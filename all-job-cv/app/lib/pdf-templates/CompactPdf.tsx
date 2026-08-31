@@ -46,7 +46,7 @@ export default function CompactPdf({ content }: { content: CvContent }) {
             <Text style={styles.name}>{content.name || "Your name"}</Text>
             {content.tagline && <Text style={styles.tagline}>{content.tagline}</Text>}
             <Text style={styles.email}>
-              {[content.email, content.phone, content.location].filter(Boolean).join(" - ")}
+              {[content.email, content.phone, [content.location, content.postcode].filter(Boolean).join(" ")].filter(Boolean).join(" - ")}
             </Text>
             {content.languages && <Text style={styles.languages}>Languages: {content.languages}</Text>}
           </View>

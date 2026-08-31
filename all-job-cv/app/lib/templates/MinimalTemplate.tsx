@@ -1,14 +1,14 @@
 import type { CvContent } from "@/app/lib/cvTypes";
 
 export default function MinimalTemplate({ content }: { content: CvContent }) {
-  const { name, title, email, phone, location, summary, skills, experience } = content;
+  const { name, title, email, phone, location, postcode, summary, skills, experience } = content;
 
   return (
     <div className="bg-white p-10 shadow-[0_1px_2px_rgba(0,0,0,0.06),0_12px_28px_rgba(32,42,60,0.12)]">
       <h2 className="text-xl font-semibold text-black">{name || "Your name"}</h2>
       <p className="mt-0.5 text-sm text-black/70">{title || "Your job title"}</p>
       <p className="mt-0.5 text-sm text-black/70">
-        {[email || "you@example.com", phone, location].filter(Boolean).join(" - ")}
+        {[email || "you@example.com", phone, [location, postcode].filter(Boolean).join(" ")].filter(Boolean).join(" - ")}
       </p>
 
       {summary && (

@@ -4,14 +4,14 @@ import type { CvContent } from "@/app/lib/cvTypes";
 const serif = Source_Serif_4({ subsets: ["latin"], weight: ["400", "600"] });
 
 export default function ClassicTemplate({ content }: { content: CvContent }) {
-  const { name, title, email, phone, location, summary, skills, experience } = content;
+  const { name, title, email, phone, location, postcode, summary, skills, experience } = content;
 
   return (
     <div className={`${serif.className} rounded-sm bg-[#FAF9F6] p-10 shadow-[0_1px_2px_rgba(0,0,0,0.06),0_12px_28px_rgba(32,42,60,0.12)]`}>
       <h2 className="text-2xl font-semibold text-[#202A3C]">{name || "Your name"}</h2>
       <p className="mt-1 text-[15px] text-[#3F6C51]">{title || "Your job title"}</p>
       <p className="mt-1 text-sm text-[#8B8578]">
-        {[email || "you@example.com", phone, location].filter(Boolean).join(" - ")}
+        {[email || "you@example.com", phone, [location, postcode].filter(Boolean).join(" ")].filter(Boolean).join(" - ")}
       </p>
 
       {summary && <p className="mt-6 text-[15px] leading-relaxed text-[#202A3C]">{summary}</p>}

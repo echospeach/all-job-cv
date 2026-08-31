@@ -22,7 +22,7 @@ export default function ClassicPdf({ content }: { content: CvContent }) {
         <Text style={styles.name}>{content.name || "Your name"}</Text>
         <Text style={styles.title}>{content.title || ""}</Text>
         <Text style={styles.email}>
-          {[content.email, content.phone, content.location].filter(Boolean).join(" - ")}
+          {[content.email, content.phone, [content.location, content.postcode].filter(Boolean).join(" ")].filter(Boolean).join(" - ")}
         </Text>
         {content.summary && <Text style={styles.summary}>{content.summary}</Text>}
         {content.skills && (

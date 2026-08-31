@@ -53,7 +53,9 @@ export default function SidebarPdf({ content }: { content: CvContent }) {
           <Text style={styles.sideLabel}>Contact</Text>
           {content.email && <Text style={styles.sideLine}>{content.email}</Text>}
           {content.phone && <Text style={styles.sideLine}>{content.phone}</Text>}
-          {content.location && <Text style={styles.sideLine}>{content.location}</Text>}
+          {(content.location || content.postcode) && (
+            <Text style={styles.sideLine}>{[content.location, content.postcode].filter(Boolean).join(" ")}</Text>
+          )}
           {content.linkedin && <Text style={styles.sideLine}>{content.linkedin}</Text>}
 
           {skillList.length > 0 && (

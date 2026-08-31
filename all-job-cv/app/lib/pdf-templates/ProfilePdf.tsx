@@ -34,7 +34,7 @@ export default function ProfilePdf({ content }: { content: CvContent }) {
           <View>
             <Text style={styles.name}>{content.name || "Your name"}</Text>
             <Text style={styles.email}>
-              {[content.email, content.phone, content.location].filter(Boolean).join(" - ")}
+              {[content.email, content.phone, [content.location, content.postcode].filter(Boolean).join(" ")].filter(Boolean).join(" - ")}
             </Text>
           </View>
           {content.photoUrl && <Image src={content.photoUrl} style={styles.photo} />}

@@ -46,6 +46,7 @@ export default function BuilderForm({
   const [email, setEmail] = useState(c?.email ?? "");
   const [phone, setPhone] = useState(c?.phone ?? "");
   const [location, setLocation] = useState(c?.location ?? "");
+  const [postcode, setPostcode] = useState(c?.postcode ?? "");
   const [linkedin, setLinkedin] = useState(c?.linkedin ?? "");
   const [summary, setSummary] = useState(c?.summary ?? "");
   const [skills, setSkills] = useState(c?.skills ?? "");
@@ -124,6 +125,7 @@ export default function BuilderForm({
       email,
       phone,
       location,
+      postcode,
       linkedin,
       summary,
       skills,
@@ -170,6 +172,7 @@ export default function BuilderForm({
     email,
     phone,
     location,
+    postcode,
     linkedin,
     summary,
     skills,
@@ -246,6 +249,9 @@ export default function BuilderForm({
             </Field>
             <Field label="Location">
               <input className="input" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Manchester, UK" />
+            </Field>
+            <Field label="Postcode">
+              <input className="input" value={postcode} onChange={(e) => setPostcode(e.target.value)} placeholder="M11 1HL" />
             </Field>
             {showExtendedContact && (
               <Field label="LinkedIn (optional)">

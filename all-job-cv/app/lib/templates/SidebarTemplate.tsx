@@ -20,6 +20,7 @@ export default function SidebarTemplate({ content }: { content: CvContent }) {
     email,
     phone,
     location,
+    postcode,
     linkedin,
     summary,
     skills,
@@ -42,7 +43,7 @@ export default function SidebarTemplate({ content }: { content: CvContent }) {
         <div className="mt-2 space-y-1 text-sm">
           {email && <p>{email}</p>}
           {phone && <p>{phone}</p>}
-          {location && <p>{location}</p>}
+          {(location || postcode) && <p>{[location, postcode].filter(Boolean).join(" ")}</p>}
           {linkedin && <p>{linkedin}</p>}
         </div>
 

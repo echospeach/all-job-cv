@@ -30,6 +30,7 @@ export type CvContent = {
   languages?: string;
   phone?: string;
   location?: string;
+  postcode?: string;
   linkedin?: string;
   certificates?: Certificate[];
 };
