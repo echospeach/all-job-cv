@@ -23,43 +23,56 @@ export default function HomeJobSearch() {
   return (
     <form
       onSubmit={handleSearch}
-      className="mx-auto flex max-w-3xl flex-col gap-3 rounded-lg border border-[#D8D3C8] bg-white p-3 sm:flex-row"
+      className="mx-auto max-w-3xl rounded-lg border border-[#D8D3C8] bg-white p-4"
     >
-      <select
-        value={country}
-        onChange={(e) => setCountry(e.target.value)}
-        className="input sm:w-40 border-none focus:shadow-none"
-      >
-        {countries.map((c) => (
-          <option key={c.code} value={c.code}>
-            {c.label}
-          </option>
-        ))}
-      </select>
-      <input
-        className="input flex-1 border-none focus:shadow-none sm:border-l sm:border-[#D8D3C8] sm:pl-4"
-        placeholder="Job title or keyword"
-        value={keyword}
-        onChange={(e) => setKeyword(e.target.value)}
-      />
-      <input
-        className="input flex-1 border-none focus:shadow-none sm:border-l sm:border-[#D8D3C8] sm:pl-4"
-        placeholder="Location"
-        list="uk-locations"
-        value={location}
-        onChange={(e) => setLocation(e.target.value)}
-      />
-      <datalist id="uk-locations">
-        {ukLocations.map((loc) => (
-          <option key={loc} value={loc} />
-        ))}
-      </datalist>
-      <button
-        type="submit"
-        className="rounded-lg bg-[#3F6C51] px-6 py-2.5 text-sm font-medium text-white hover:bg-[#345A44]"
-      >
-        Search jobs
-      </button>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_1fr_1fr_auto]">
+        <div>
+          <label className="mb-1 block text-xs font-medium text-[#8B8578]">Country</label>
+          <select
+            value={country}
+            onChange={(e) => setCountry(e.target.value)}
+            className="input"
+          >
+            {countries.map((c) => (
+              <option key={c.code} value={c.code}>
+                {c.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-medium text-[#8B8578]">Job title or keyword</label>
+          <input
+            className="input"
+            placeholder="e.g. Software developer"
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-medium text-[#8B8578]">Location</label>
+          <input
+            className="input"
+            placeholder="e.g. Manchester"
+            list="uk-locations"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+          />
+          <datalist id="uk-locations">
+            {ukLocations.map((loc) => (
+              <option key={loc} value={loc} />
+            ))}
+          </datalist>
+        </div>
+        <div className="flex items-end">
+          <button
+            type="submit"
+            className="w-full rounded-lg bg-[#3F6C51] px-6 py-2.5 text-sm font-medium text-white hover:bg-[#345A44] sm:w-auto"
+          >
+            Search jobs
+          </button>
+        </div>
+      </div>
     </form>
   );
 }

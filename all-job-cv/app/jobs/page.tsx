@@ -73,42 +73,55 @@ export default function JobsPage() {
         </p>
         <h1 className="mb-6 text-2xl font-semibold text-[#202A3C]">Find your next role</h1>
 
-        <form onSubmit={handleSearch} className="mb-8 flex flex-col gap-3 sm:flex-row">
-          <select
-            value={country}
-            onChange={(e) => setCountry(e.target.value)}
-            className="input sm:w-40"
-          >
-            {countries.map((c) => (
-              <option key={c.code} value={c.code}>
-                {c.label}
-              </option>
-            ))}
-          </select>
-          <input
-            className="input flex-1"
-            placeholder="Job title or keyword"
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-          />
-          <input
-            className="input flex-1"
-            placeholder="Location, e.g. Manchester"
-            list="uk-locations"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-          />
-          <datalist id="uk-locations">
-            {ukLocations.map((loc) => (
-              <option key={loc} value={loc} />
-            ))}
-          </datalist>
-          <button
-            type="submit"
-            className="rounded-lg bg-[#202A3C] px-6 py-2.5 text-sm font-medium text-white hover:bg-[#2C3B52]"
-          >
-            Search
-          </button>
+        <form onSubmit={handleSearch} className="mb-8 rounded-lg border border-[#D8D3C8] bg-white p-4">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_1fr_1fr_auto]">
+            <div>
+              <label className="mb-1 block text-xs font-medium text-[#8B8578]">Country</label>
+              <select
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+                className="input"
+              >
+                {countries.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-medium text-[#8B8578]">Job title or keyword</label>
+              <input
+                className="input"
+                placeholder="e.g. Software developer"
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-medium text-[#8B8578]">Location</label>
+              <input
+                className="input"
+                placeholder="e.g. Manchester"
+                list="uk-locations"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+              />
+              <datalist id="uk-locations">
+                {ukLocations.map((loc) => (
+                  <option key={loc} value={loc} />
+                ))}
+              </datalist>
+            </div>
+            <div className="flex items-end">
+              <button
+                type="submit"
+                className="w-full rounded-lg bg-[#202A3C] px-6 py-2.5 text-sm font-medium text-white hover:bg-[#2C3B52] sm:w-auto"
+              >
+                Search
+              </button>
+            </div>
+          </div>
         </form>
 
         {loading && <p className="text-sm text-[#8B8578]">Loading jobs...</p>}
