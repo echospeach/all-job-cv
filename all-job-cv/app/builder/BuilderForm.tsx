@@ -9,12 +9,14 @@ import MinimalTemplate from "@/app/lib/templates/MinimalTemplate";
 import ProfileTemplate from "@/app/lib/templates/ProfileTemplate";
 import CompactTemplate from "@/app/lib/templates/CompactTemplate";
 import SidebarTemplate from "@/app/lib/templates/SidebarTemplate";
+import PaywallModal from "./[id]/PaywallModal";
 
 type ExistingCv = {
   id: string;
   title: string;
   content: CvContent;
   template?: string;
+  paidUnlocked?: boolean;
 };
 
 const templates = [
@@ -27,6 +29,7 @@ const templates = [
 ];
 
 const needsPhoto = ["profile", "compact", "sidebar"];
+const premiumTemplates = ["modern", "profile", "compact", "sidebar"];
 const needsTagline = ["profile", "compact"];
 const needsExtendedContact = ["sidebar"];
 
@@ -34,10 +37,12 @@ export default function BuilderForm({
   userId,
   existingCv,
   initialTemplate,
+  isSubscribed = false,
 }: {
   userId: string;
   existingCv?: ExistingCv;
   initialTemplate?: string;
+  isSubscribed?: boolean;
 }) {
   const c = existingCv?.content;
 
@@ -75,6 +80,7 @@ export default function BuilderForm({
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
+  const [showPaywall, setShowPaywall] = useState(false);
 
   async function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -116,6 +122,14 @@ export default function BuilderForm({
   }
 
   async function handleSave() {
+    const isPremiumTemplate = premiumTemplates.includes(template);
+    const alreadyUnlocked = isSubscribed || existingCv?.paidUnlocked;
+
+    if (isPremiumTemplate && !alreadyUnlocked) {
+      setShowPaywall(true);
+      return;
+    }
+
     setSaving(true);
     setSaved(false);
     setError("");
@@ -194,6 +208,16 @@ export default function BuilderForm({
 
   return (
     <div className="min-h-screen bg-[#F0EEE8]">
+      {showPaywall && existingCv && (
+        <PaywallModal
+          cvId={existingCv.id}
+          onClose={() => setShowPaywall(false)}
+          onUseFree={() => {
+            setTemplate("classic");
+            setShowPaywall(false);
+          }}
+        />
+      )}
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 px-6 py-12 lg:grid-cols-2">
         <div>
           <p className="mb-1 text-xs font-medium uppercase tracking-widest text-[#3F6C51]">CV builder</p>
