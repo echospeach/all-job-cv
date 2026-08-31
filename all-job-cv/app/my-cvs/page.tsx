@@ -69,6 +69,12 @@ export default async function MyCvsPage() {
                     >
                       Edit
                     </Link>
+                    <Link
+                      href={`/builder/${cv.id}#template`}
+                      className="rounded-lg border border-[#3F6C51] px-3 py-1.5 text-sm font-medium text-[#3F6C51] hover:bg-[#F0EEE8]"
+                    >
+                      Change template
+                    </Link>
                     <a
                       href={`/api/cv/${cv.id}/pdf`}
                       className="rounded-lg border border-[#D8D3C8] px-3 py-1.5 text-sm font-medium text-[#202A3C] hover:bg-[#F0EEE8]"

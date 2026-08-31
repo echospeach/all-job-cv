@@ -245,7 +245,7 @@ export default function BuilderForm({
           )}
 
           <div className="space-y-5">
-            <div>
+            <div id="template">
               <label className="mb-1.5 block text-sm font-medium text-[#202A3C]">Template</label>
               <div className="flex flex-wrap gap-2">
                 {templates.map((t) => (
