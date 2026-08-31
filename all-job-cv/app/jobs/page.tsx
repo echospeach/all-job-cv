@@ -135,8 +135,11 @@ export default function JobsPage() {
               onChange={(e) => setSponsorship(e.target.checked)}
               className="h-4 w-4 rounded border-[#D8D3C8] accent-[#3F6C51]"
             />
-            Only show jobs that mention visa sponsorship
+            Only show jobs that may offer visa sponsorship
           </label>
+          <p className="mt-1 text-xs text-[#8B8578]">
+            Based on search results from job boards. Always confirm sponsorship directly with the employer.
+          </p>
         </form>
 
         {loading && <p className="text-sm text-[#8B8578]">Loading jobs...</p>}
@@ -163,7 +166,7 @@ export default function JobsPage() {
                 </div>
                 {job.sponsorsVisa && (
                   <span className="shrink-0 rounded-full bg-[#EAF3DE] px-2.5 py-1 text-xs font-medium text-[#3F6C51]">
-                    Visa sponsorship
+                    May sponsor visa
                   </span>
                 )}
               </div>

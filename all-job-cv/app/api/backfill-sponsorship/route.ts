@@ -1,23 +1,11 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 
-const sponsorshipKeywords = [
-  "visa sponsorship",
-  "sponsor visa",
-  "sponsorship available",
-  "sponsorship license",
-  "sponsorship licence",
-  "skilled worker visa",
-  "will sponsor",
-  "visa sponsor",
-  "h-1b",
-  "h1b sponsorship",
-  "relocation and visa",
-];
-
 function detectSponsorship(description: string): boolean {
   const lower = description.toLowerCase();
-  return sponsorshipKeywords.some((kw) => lower.includes(kw));
+  const hasVisaWord = lower.includes("visa") || lower.includes("h-1b") || lower.includes("h1b");
+  const hasSponsorWord = lower.includes("sponsor");
+  return hasVisaWord && hasSponsorWord;
 }
 
 function isAuthorized(request: Request): boolean {

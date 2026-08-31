@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 
 const searchTerms = [
+  "visa sponsorship",
+  "sponsorship available",
   "software developer",
   "software engineer",
   "product designer",
@@ -30,23 +32,11 @@ type AdzunaJob = {
   redirect_url: string;
 };
 
-const sponsorshipKeywords = [
-  "visa sponsorship",
-  "sponsor visa",
-  "sponsorship available",
-  "sponsorship license",
-  "sponsorship licence",
-  "skilled worker visa",
-  "will sponsor",
-  "visa sponsor",
-  "h-1b",
-  "h1b sponsorship",
-  "relocation and visa",
-];
-
 function detectSponsorship(description: string): boolean {
   const lower = description.toLowerCase();
-  return sponsorshipKeywords.some((kw) => lower.includes(kw));
+  const hasVisaWord = lower.includes("visa") || lower.includes("h-1b") || lower.includes("h1b");
+  const hasSponsorWord = lower.includes("sponsor");
+  return hasVisaWord && hasSponsorWord;
 }
 
 function isAuthorized(request: Request): boolean {
@@ -68,8 +58,11 @@ async function runSync() {
   let totalInserted = 0;
   let totalSkipped = 0;
 
+  const sponsorshipSearchTerms = new Set(["visa sponsorship", "sponsorship available"]);
+
   for (const country of countries) {
     for (const term of searchTerms) {
+      const isFromSponsorshipSearch = sponsorshipSearchTerms.has(term);
       const url = `https://api.adzuna.com/v1/api/jobs/${country}/search/1?app_id=${appId}&app_key=${appKey}&results_per_page=10&what=${encodeURIComponent(
         term
       )}&content-type=application/json`;
@@ -97,7 +90,7 @@ async function runSync() {
             location: job.location?.display_name ?? null,
             description: job.description,
             url: job.redirect_url ?? null,
-            sponsorsVisa: detectSponsorship(job.description),
+            sponsorsVisa: isFromSponsorshipSearch || detectSponsorship(job.description),
             country,
           },
         });
