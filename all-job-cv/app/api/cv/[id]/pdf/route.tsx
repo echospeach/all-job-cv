@@ -1,7 +1,12 @@
 import { renderToBuffer } from "@react-pdf/renderer";
 import { auth } from "@/app/lib/auth";
 import { prisma } from "@/app/lib/prisma";
-import CvPdfDocument from "@/app/lib/CvPdfDocument";
+import ClassicPdf from "@/app/lib/pdf-templates/ClassicPdf";
+import ModernPdf from "@/app/lib/pdf-templates/ModernPdf";
+import MinimalPdf from "@/app/lib/pdf-templates/MinimalPdf";
+import ProfilePdf from "@/app/lib/pdf-templates/ProfilePdf";
+import CompactPdf from "@/app/lib/pdf-templates/CompactPdf";
+import SidebarPdf from "@/app/lib/pdf-templates/SidebarPdf";
 
 export async function GET(
   request: Request,
@@ -19,9 +24,19 @@ export async function GET(
     return new Response("Not found", { status: 404 });
   }
 
-  const buffer = await renderToBuffer(
-    <CvPdfDocument content={cv.content as any} />
-  );
+  const content = cv.content as any;
+  const template = cv.template || "classic";
+
+  const docMap: Record<string, JSX.Element> = {
+    classic: <ClassicPdf content={content} />,
+    modern: <ModernPdf content={content} />,
+    minimal: <MinimalPdf content={content} />,
+    profile: <ProfilePdf content={content} />,
+    compact: <CompactPdf content={content} />,
+    sidebar: <SidebarPdf content={content} />,
+  };
+
+  const buffer = await renderToBuffer(docMap[template] ?? docMap.classic);
 
   return new Response(new Uint8Array(buffer), {
     headers: {

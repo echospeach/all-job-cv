@@ -241,18 +241,16 @@ export default function BuilderForm({
               <input className="input" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="jane@example.com" />
             </Field>
 
+            <Field label="Phone">
+              <input className="input" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+44 7700 900000" />
+            </Field>
+            <Field label="Location">
+              <input className="input" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Manchester, UK" />
+            </Field>
             {showExtendedContact && (
-              <>
-                <Field label="Phone">
-                  <input className="input" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+44 7700 900000" />
-                </Field>
-                <Field label="Location">
-                  <input className="input" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Manchester, UK" />
-                </Field>
-                <Field label="LinkedIn (optional)">
-                  <input className="input" value={linkedin} onChange={(e) => setLinkedin(e.target.value)} placeholder="linkedin.com/in/janedoe" />
-                </Field>
-              </>
+              <Field label="LinkedIn (optional)">
+                <input className="input" value={linkedin} onChange={(e) => setLinkedin(e.target.value)} placeholder="linkedin.com/in/janedoe" />
+              </Field>
             )}
 
             {showTagline && (

@@ -1,7 +1,7 @@
 import type { CvContent } from "@/app/lib/cvTypes";
 
 export default function ModernTemplate({ content }: { content: CvContent }) {
-  const { name, title, email, summary, skills, experience } = content;
+  const { name, title, email, phone, location, summary, skills, experience } = content;
   const skillList = skills ? skills.split(",").map((s) => s.trim()).filter(Boolean) : [];
 
   return (
@@ -9,7 +9,9 @@ export default function ModernTemplate({ content }: { content: CvContent }) {
       <div className="w-[34%] bg-[#1B2438] p-6 text-white">
         <h2 className="text-lg font-semibold leading-tight">{name || "Your name"}</h2>
         <p className="mt-1 text-sm text-[#C08A3E]">{title || "Your job title"}</p>
-        <p className="mt-4 text-xs text-white/70">{email || "you@example.com"}</p>
+        <p className="mt-4 text-xs text-white/70">
+          {[email || "you@example.com", phone, location].filter(Boolean).join(" - ")}
+        </p>
 
         {skillList.length > 0 && (
           <div className="mt-8">

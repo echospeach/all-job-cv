@@ -13,7 +13,7 @@ function splitInHalf<T>(items: T[]): [T[], T[]] {
 }
 
 export default function CompactTemplate({ content }: { content: CvContent }) {
-  const { name, email, summary, skills, experience, photoUrl, hobbies, education, tagline, languages } = content;
+  const { name, email, phone, location, summary, skills, experience, photoUrl, hobbies, education, tagline, languages } = content;
   const skillList = skills ? skills.split(",").map((s) => s.trim()).filter(Boolean) : [];
   const [skillsLeft, skillsRight] = splitInHalf(skillList);
 
@@ -33,7 +33,9 @@ export default function CompactTemplate({ content }: { content: CvContent }) {
             {name || "Your name"}
           </h2>
           {tagline && <p className="mt-1 text-sm italic text-black/70">{tagline}</p>}
-          <p className="mt-1 text-sm text-black/70">{email || "you@example.com"}</p>
+          <p className="mt-1 text-sm text-black/70">
+            {[email || "you@example.com", phone, location].filter(Boolean).join(" - ")}
+          </p>
           {languages && (
             <p className="mt-1 text-sm text-black/70">
               <span className="font-semibold">Languages:</span> {languages}

@@ -24,3 +24,21 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.input {
+  width: 100%;
+  border: 1.5px solid #B8B2A3;
+  border-radius: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.9rem;
+  color: #202A3C;
+  background: #FFFFFF;
+  outline: none;
+}
+.input::placeholder {
+  color: #A8A297;
+}
+.input:focus {
+  border-color: #3F6C51;
+  box-shadow: 0 0 0 3px rgba(63, 108, 81, 0.15);
+}

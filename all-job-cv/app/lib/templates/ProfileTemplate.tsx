@@ -8,7 +8,7 @@ function bulletsFrom(text: string): string[] {
 }
 
 export default function ProfileTemplate({ content }: { content: CvContent }) {
-  const { name, email, summary, skills, experience, photoUrl, hobbies, education } = content;
+  const { name, email, phone, location, summary, skills, experience, photoUrl, hobbies, education } = content;
   const skillList = skills ? skills.split(",").map((s) => s.trim()).filter(Boolean) : [];
 
   return (
@@ -18,7 +18,9 @@ export default function ProfileTemplate({ content }: { content: CvContent }) {
           <h2 className="text-lg font-bold uppercase tracking-wide text-black">
             {name || "Your name"}
           </h2>
-          <p className="mt-1 text-sm text-black/70">{email || "you@example.com"}</p>
+          <p className="mt-1 text-sm text-black/70">
+            {[email || "you@example.com", phone, location].filter(Boolean).join(" - ")}
+          </p>
         </div>
         {photoUrl && (
           // eslint-disable-next-line @next/next/no-img-element
