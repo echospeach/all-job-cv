@@ -27,7 +27,7 @@ export async function GET(
   const content = cv.content as any;
   const template = cv.template || "classic";
 
-  const docMap: Record<string, JSX.Element> = {
+  const docMap: Record<string, React.JSX.Element> = {
     classic: <ClassicPdf content={content} />,
     modern: <ModernPdf content={content} />,
     minimal: <MinimalPdf content={content} />,
