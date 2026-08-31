@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Source_Serif_4 } from "next/font/google";
+import HomeJobSearch from "@/app/components/HomeJobSearch";
 
 const serif = Source_Serif_4({ subsets: ["latin"], weight: ["400", "600"] });
 
@@ -55,6 +56,16 @@ export default function Home() {
               </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Job search */}
+      <section className="border-t border-[#D8D3C8] bg-[#F0EEE8] py-14">
+        <div className="mx-auto max-w-6xl px-6">
+          <p className="mb-2 text-center text-sm font-medium text-[#202A3C]">
+            Or search thousands of live UK job listings right now
+          </p>
+          <HomeJobSearch />
         </div>
       </section>
 
