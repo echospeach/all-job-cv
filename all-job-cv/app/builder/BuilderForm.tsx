@@ -208,6 +208,7 @@ export default function BuilderForm({
 
   return (
     <div className="min-h-screen bg-[#F0EEE8]">
+      <div style={{background: "yellow", padding: "8px", fontSize: "12px"}}>DEBUG: template={template} | isSubscribed={String(isSubscribed)} | paidUnlocked={String(existingCv?.paidUnlocked)} | isPremiumTemplate={String(premiumTemplates.includes(template))}</div>
       {showPaywall && existingCv && (
         <PaywallModal
           cvId={existingCv.id}
