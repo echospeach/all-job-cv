@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { auth, signIn, signOut } from "@/app/lib/auth";
+import { auth, signOut } from "@/app/lib/auth";
 
 export default async function Header() {
   const session = await auth();
@@ -35,16 +35,12 @@ export default async function Header() {
             </form>
           </div>
         ) : (
-          <form
-            action={async () => {
-              "use server";
-              await signIn("google", { redirectTo: "/builder" });
-            }}
+          <Link
+            href="/signin"
+            className="rounded-lg bg-[#202A3C] px-4 py-1.5 text-sm font-medium text-white hover:bg-[#2C3B52]"
           >
-            <button className="rounded-lg bg-[#202A3C] px-4 py-1.5 text-sm font-medium text-white hover:bg-[#2C3B52]">
-              Sign in with Google
-            </button>
-          </form>
+            Sign in
+          </Link>
         )}
       </div>
     </header>
