@@ -28,7 +28,7 @@ type AdzunaJob = {
   redirect_url: string;
 };
 
-export async function POST() {
+async function runSync() {
   const appId = process.env.ADZUNA_APP_ID;
   const appKey = process.env.ADZUNA_APP_KEY;
 
@@ -81,4 +81,23 @@ export async function POST() {
     inserted: totalInserted,
     skippedDuplicates: totalSkipped,
   });
+}
+
+function isAuthorized(request: Request): boolean {
+  const authHeader = request.headers.get("authorization");
+  return authHeader === `Bearer ${process.env.CRON_SECRET}`;
+}
+
+export async function GET(request: Request) {
+  if (!isAuthorized(request)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  return runSync();
+}
+
+export async function POST(request: Request) {
+  if (!isAuthorized(request)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  return runSync();
 }
