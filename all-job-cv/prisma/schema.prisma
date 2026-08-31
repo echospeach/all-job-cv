@@ -18,9 +18,14 @@ model User {
   image         String?
   emailVerified DateTime?
   password      String?
+  stripeCustomerId     String?
+  subscriptionStatus   String?
+  subscriptionId       String?
+  subscriptionPeriodEnd DateTime?
   createdAt     DateTime  @default(now())
   cvs           Cv[]
   applications  Application[]
+  purchases     Purchase[]
   accounts      Account[]
   sessions      Session[]
 }
@@ -70,6 +75,7 @@ model Cv {
   matches   Json?
   matchesAt DateTime?
   template  String   @default("classic")
+  paidUnlocked Boolean @default(false)
 }
 
 model Job {
@@ -93,4 +99,14 @@ model Application {
   appliedAt DateTime @default(now())
 
   @@unique([userId, jobId])
+}
+
+model Purchase {
+  id                String   @id @default(uuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+  cvId              String
+  stripeSessionId   String   @unique
+  amount            Int
+  createdAt         DateTime @default(now())
 }
