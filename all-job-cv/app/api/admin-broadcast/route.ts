@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { isAdminAuthenticated } from "@/app/lib/adminAuth";
 import { prisma } from "@/app/lib/prisma";
 import { resend } from "@/app/lib/resend";
+import { escapeHtml } from "@/app/lib/escapeHtml";
 
 function buildEmailHtml(job: {
   id: string;
@@ -11,18 +12,23 @@ function buildEmailHtml(job: {
   description: string;
   sponsorsVisa: boolean;
 }, appUrl: string) {
+  const title = escapeHtml(job.title);
+  const company = escapeHtml(job.company);
+  const location = job.location ? escapeHtml(job.location) : "";
+  const description = escapeHtml(job.description.slice(0, 300)) + (job.description.length > 300 ? "..." : "");
+
   return `
     <div style="font-family: sans-serif; max-width: 560px; margin: 0 auto; color: #202A3C;">
       <p style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #3F6C51; margin-bottom: 4px;">
         New sponsored job
       </p>
-      <h1 style="font-size: 20px; margin: 0 0 8px;">${job.title}</h1>
+      <h1 style="font-size: 20px; margin: 0 0 8px;">${title}</h1>
       <p style="color: #8B8578; margin: 0 0 16px;">
-        ${job.company}${job.location ? " - " + job.location : ""}
+        ${company}${location ? " - " + location : ""}
       </p>
       ${job.sponsorsVisa ? '<p style="display:inline-block; background:#EAF3DE; color:#3F6C51; padding:4px 10px; border-radius:999px; font-size:12px; margin-bottom:16px;">May sponsor visa</p>' : ""}
       <p style="line-height: 1.6; color: #3A3833;">
-        ${job.description.slice(0, 300)}${job.description.length > 300 ? "..." : ""}
+        ${description}
       </p>
       <a href="${appUrl}/jobs/${job.id}" style="display:inline-block; margin-top:16px; background:#202A3C; color:#fff; padding:10px 20px; border-radius:8px; text-decoration:none; font-size:14px;">
         View on ALL JOB CV
