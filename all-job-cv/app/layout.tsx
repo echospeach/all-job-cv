@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { headers } from "next/headers";
 import "./globals.css";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
@@ -19,13 +20,21 @@ export const metadata: Metadata = {
   description: "Build a professional CV and get matched with jobs.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const headersList = await headers();
+  const pathname = headersList.get("x-pathname") || "";
+  const isAdminRoute = pathname.startsWith("/admin");
+
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col"><Header />{children}<Footer /></body>
+      <body className="min-h-full flex flex-col">
+        {!isAdminRoute && <Header />}
+        {children}
+        {!isAdminRoute && <Footer />}
+      </body>
     </html>
   );
 }
