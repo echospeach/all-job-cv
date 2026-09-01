@@ -186,7 +186,9 @@ export default function JobsPage() {
             <div key={job.id} className="rounded-lg border border-[#D8D3C8] bg-white p-5">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-[15px] font-semibold text-[#202A3C]">{job.title}</p>
+                  <Link href={`/jobs/${job.id}`} className="text-[15px] font-semibold text-[#202A3C] hover:underline">
+                    {job.title}
+                  </Link>
                   <p className="text-sm text-[#8B8578]">
                     {job.company}
                     {job.location ? ` - ${job.location}` : ""}

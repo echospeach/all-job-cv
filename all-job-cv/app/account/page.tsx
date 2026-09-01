@@ -1,11 +1,10 @@
-import { redirect } from "next/navigation";
 import { requireUser } from "@/app/lib/getSessionUser";
 import { prisma } from "@/app/lib/prisma";
 import SubscribeButton from "./SubscribeButton";
+import EmailPreferenceToggle from "./EmailPreferenceToggle";
 
 export default async function AccountPage() {
   const sessionUser = await requireUser();
-
   const user = await prisma.user.findUnique({ where: { id: sessionUser.id } });
   const isActive = user?.subscriptionStatus === "active";
 
@@ -26,7 +25,6 @@ export default async function AccountPage() {
               ? "You have access to every template, unlimited downloads, and unlimited job matching."
               : "You have access to Classic and Minimal templates with unlimited downloads."}
           </p>
-
           {!isActive && (
             <div className="mt-5">
               <p className="mb-3 text-sm font-medium text-[#202A3C]">
@@ -40,6 +38,11 @@ export default async function AccountPage() {
               <SubscribeButton />
             </div>
           )}
+        </div>
+
+        <div className="mt-6 rounded-lg border border-[#D8D3C8] bg-white p-6">
+          <p className="mb-3 text-sm font-semibold text-[#202A3C]">Email preferences</p>
+          <EmailPreferenceToggle initialOptOut={user?.emailOptOut ?? false} />
         </div>
       </div>
     </div>
