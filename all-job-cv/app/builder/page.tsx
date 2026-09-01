@@ -1,4 +1,4 @@
-import { requireUser } from "@/app/lib/getSessionUser";
+import { auth } from "@/app/lib/auth";
 import { prisma } from "@/app/lib/prisma";
 import BuilderForm from "./BuilderForm";
 
@@ -7,16 +7,18 @@ export default async function BuilderPage({
 }: {
   searchParams: Promise<{ template?: string }>;
 }) {
-  const sessionUser = await requireUser();
-
+  const session = await auth();
   const { template } = await searchParams;
 
-  const user = await prisma.user.findUnique({ where: { id: sessionUser.id } });
-  const isSubscribed = user?.subscriptionStatus === "active";
+  let isSubscribed = false;
+  if (session?.user?.id) {
+    const user = await prisma.user.findUnique({ where: { id: session.user.id } });
+    isSubscribed = user?.subscriptionStatus === "active";
+  }
 
   return (
     <BuilderForm
-      userId={sessionUser.id}
+      userId={session?.user?.id ?? null}
       initialTemplate={template}
       isSubscribed={isSubscribed}
     />

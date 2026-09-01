@@ -43,7 +43,7 @@ export default function BuilderForm({
   isSubscribed = false,
   openPaywallOnLoad = false,
 }: {
-  userId: string;
+  userId: string | null;
   existingCv?: ExistingCv;
   initialTemplate?: string;
   isSubscribed?: boolean;
@@ -94,6 +94,31 @@ export default function BuilderForm({
     }
   }, [openPaywallOnLoad]);
 
+  useEffect(() => {
+    if (!userId) return;
+    const pending = localStorage.getItem("pendingCv");
+    if (!pending) return;
+
+    localStorage.removeItem("pendingCv");
+
+    (async () => {
+      try {
+        const draft = JSON.parse(pending);
+        const res = await fetch("/api/cv", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId, ...draft }),
+        });
+        if (res.ok) {
+          const created = await res.json();
+          window.location.href = `/builder/${created.id}`;
+        }
+      } catch {
+        // If this fails, the user just continues with a blank builder - not a big deal.
+      }
+    })();
+  }, [userId]);
+
   async function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -134,6 +159,19 @@ export default function BuilderForm({
   }
 
   async function handleSave() {
+    if (!userId) {
+      const content: CvContent = {
+        name, title, email, phone, location, postcode, linkedin, summary,
+        skills, experience, photoUrl, hobbies, education, tagline, languages, certificates,
+      };
+      localStorage.setItem(
+        "pendingCv",
+        JSON.stringify({ title: title || "Untitled CV", content, template })
+      );
+      window.location.href = "/signup?guest=1";
+      return;
+    }
+
     const isPremiumTemplate = premiumTemplates.includes(template);
     const alreadyUnlocked = isSubscribed || existingCv?.paidUnlocked;
 
