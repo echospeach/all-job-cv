@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import { locationsByCountry } from "@/app/lib/locationsByCountry";
 import { countries } from "@/app/lib/countries";
 
@@ -14,6 +15,7 @@ type Job = {
   url: string | null;
   country: string;
   sponsorsVisa: boolean;
+  matchScore: number | null;
 };
 
 export default function JobsPage() {
@@ -27,6 +29,7 @@ export default function JobsPage() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [sortByMatch, setSortByMatch] = useState(false);
 
   const fetchJobs = useCallback(async (q: string, loc: string, c: string, s: boolean) => {
     setLoading(true);
@@ -69,6 +72,10 @@ export default function JobsPage() {
   }
 
   const countryLabel = countries.find((c) => c.code === country)?.label || "";
+  const hasScores = jobs.some((j) => j.matchScore !== null);
+  const displayedJobs = sortByMatch && hasScores
+    ? [...jobs].sort((a, b) => (b.matchScore ?? 0) - (a.matchScore ?? 0))
+    : jobs;
 
   return (
     <div className="min-h-screen bg-[#F0EEE8]">
@@ -142,6 +149,27 @@ export default function JobsPage() {
           </p>
         </form>
 
+        {!loading && !hasScores && (
+          <p className="mb-4 text-sm text-[#8B8578]">
+            <Link href="/builder" className="font-medium text-[#3F6C51] hover:underline">
+              Build a CV
+            </Link>{" "}
+            to see how well each job matches your skills.
+          </p>
+        )}
+
+        {hasScores && (
+          <label className="mb-4 flex items-center gap-2 text-sm text-[#202A3C]">
+            <input
+              type="checkbox"
+              checked={sortByMatch}
+              onChange={(e) => setSortByMatch(e.target.checked)}
+              className="h-4 w-4 rounded border-[#D8D3C8] accent-[#3F6C51]"
+            />
+            Sort by best match
+          </label>
+        )}
+
         {loading && <p className="text-sm text-[#8B8578]">Loading jobs...</p>}
         {error && <p className="text-sm text-[#993C1D]">{error}</p>}
 
@@ -154,7 +182,7 @@ export default function JobsPage() {
         )}
 
         <div className="space-y-3">
-          {jobs.map((job) => (
+          {displayedJobs.map((job) => (
             <div key={job.id} className="rounded-lg border border-[#D8D3C8] bg-white p-5">
               <div className="flex items-start justify-between gap-3">
                 <div>
@@ -164,11 +192,24 @@ export default function JobsPage() {
                     {job.location ? ` - ${job.location}` : ""}
                   </p>
                 </div>
-                {job.sponsorsVisa && (
-                  <span className="shrink-0 rounded-full bg-[#EAF3DE] px-2.5 py-1 text-xs font-medium text-[#3F6C51]">
-                    May sponsor visa
-                  </span>
-                )}
+                <div className="flex shrink-0 flex-col items-end gap-1.5">
+                  {job.matchScore !== null && (
+                    <span
+                      className={
+                        job.matchScore >= 50
+                          ? "rounded-full bg-[#EAF3DE] px-2.5 py-1 text-xs font-semibold text-[#3F6C51]"
+                          : "rounded-full bg-[#F0EEE8] px-2.5 py-1 text-xs font-medium text-[#8B8578]"
+                      }
+                    >
+                      {job.matchScore}% keyword match
+                    </span>
+                  )}
+                  {job.sponsorsVisa && (
+                    <span className="rounded-full bg-[#EAF3DE] px-2.5 py-1 text-xs font-medium text-[#3F6C51]">
+                      May sponsor visa
+                    </span>
+                  )}
+                </div>
               </div>
               <p className="mt-3 text-sm leading-relaxed text-[#5C5A52] line-clamp-3">
                 {job.description}
