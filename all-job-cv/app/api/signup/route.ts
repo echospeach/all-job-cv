@@ -31,9 +31,11 @@ export async function POST(request: Request) {
   }
 
   const hashed = await bcrypt.hash(password, 12);
+  const signupCountry = request.headers.get("x-vercel-ip-country") || null;
+  const signupRegion = request.headers.get("x-vercel-ip-country-region") || null;
 
   const user = await prisma.user.create({
-    data: { email, password: hashed, name: name || null },
+    data: { email, password: hashed, name: name || null, signupCountry, signupRegion },
   });
 
   return NextResponse.json({ id: user.id, email: user.email }, { status: 201 });

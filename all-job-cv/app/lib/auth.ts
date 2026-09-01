@@ -4,6 +4,7 @@ import Credentials from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/app/lib/prisma";
+import { headers } from "next/headers";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -39,6 +40,23 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: "/signin",
   },
   trustHost: true,
+  events: {
+    async createUser({ user }) {
+      try {
+        const headersList = await headers();
+        const signupCountry = headersList.get("x-vercel-ip-country") || null;
+        const signupRegion = headersList.get("x-vercel-ip-country-region") || null;
+        if (user.id) {
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { signupCountry, signupRegion },
+          });
+        }
+      } catch {
+        // Non-critical - skip if headers aren't available in this context
+      }
+    },
+  },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {

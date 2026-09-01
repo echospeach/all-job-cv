@@ -20,6 +20,8 @@ model User {
   password      String?
   emailOptOut   Boolean   @default(false)
   country       String?
+  signupCountry String?
+  signupRegion  String?
   stripeCustomerId     String?
   subscriptionStatus   String?
   subscriptionId       String?

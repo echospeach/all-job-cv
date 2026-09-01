@@ -73,6 +73,12 @@ export default async function AdminPage() {
               Manage users
             </Link>
             <Link
+              href="/admin/insights"
+              className="rounded-lg border border-[#D8D3C8] bg-white px-4 py-2 text-sm font-medium text-[#202A3C] hover:bg-[#F0EEE8]"
+            >
+              Insights
+            </Link>
+            <Link
               href="/admin/broadcast"
               className="rounded-lg border border-[#D8D3C8] bg-white px-4 py-2 text-sm font-medium text-[#202A3C] hover:bg-[#F0EEE8]"
             >
