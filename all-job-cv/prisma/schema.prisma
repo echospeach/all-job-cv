@@ -121,3 +121,15 @@ model RateLimit {
   count       Int      @default(1)
   windowStart DateTime @default(now())
 }
+
+model BroadcastLog {
+  id         String   @id @default(uuid())
+  jobId      String
+  jobTitle   String
+  jobCompany String
+  target     String
+  targetDetail String?
+  sentCount  Int
+  totalCount Int
+  createdAt  DateTime @default(now())
+}

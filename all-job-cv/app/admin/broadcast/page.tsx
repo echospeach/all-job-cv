@@ -23,7 +23,12 @@ export default async function BroadcastPage() {
         <p className="mb-1 mt-3 text-xs font-medium uppercase tracking-widest text-[#3F6C51]">
           Internal
         </p>
-        <h1 className="mb-8 text-2xl font-semibold text-[#202A3C]">Send broadcast</h1>
+        <div className="mb-8 flex items-center justify-between">
+          <h1 className="text-2xl font-semibold text-[#202A3C]">Send broadcast</h1>
+          <Link href="/admin/broadcast-history" className="text-sm font-medium text-[#3F6C51] hover:underline">
+            View history
+          </Link>
+        </div>
         <BroadcastForm jobs={jobs} />
       </div>
     </div>

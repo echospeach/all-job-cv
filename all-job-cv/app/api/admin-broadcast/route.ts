@@ -65,6 +65,17 @@ export async function POST(request: Request) {
         subject: `New job: ${job.title} at ${job.company}`,
         html,
       });
+      await prisma.broadcastLog.create({
+        data: {
+          jobId: job.id,
+          jobTitle: job.title,
+          jobCompany: job.company,
+          target: "individual",
+          targetDetail: targetEmail,
+          sentCount: 1,
+          totalCount: 1,
+        },
+      });
       return NextResponse.json({ message: "Sent to individual", sent: 1, total: 1 });
     } catch (err) {
       return NextResponse.json(
@@ -104,6 +115,18 @@ export async function POST(request: Request) {
       console.error("Broadcast batch failed:", err);
     }
   }
+
+  await prisma.broadcastLog.create({
+    data: {
+      jobId: job.id,
+      jobTitle: job.title,
+      jobCompany: job.company,
+      target: targetCountry ? "country" : "all",
+      targetDetail: targetCountry || null,
+      sentCount: sent,
+      totalCount: recipients.length,
+    },
+  });
 
   return NextResponse.json({ message: "Broadcast sent", sent, total: recipients.length });
 }

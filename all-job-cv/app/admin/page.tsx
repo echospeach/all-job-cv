@@ -61,6 +61,18 @@ export default async function AdminPage() {
               + Add sponsor job
             </Link>
             <Link
+              href="/admin/jobs"
+              className="rounded-lg border border-[#D8D3C8] bg-white px-4 py-2 text-sm font-medium text-[#202A3C] hover:bg-[#F0EEE8]"
+            >
+              Manage jobs
+            </Link>
+            <Link
+              href="/admin/users"
+              className="rounded-lg border border-[#D8D3C8] bg-white px-4 py-2 text-sm font-medium text-[#202A3C] hover:bg-[#F0EEE8]"
+            >
+              Manage users
+            </Link>
+            <Link
               href="/admin/broadcast"
               className="rounded-lg border border-[#D8D3C8] bg-white px-4 py-2 text-sm font-medium text-[#202A3C] hover:bg-[#F0EEE8]"
             >
