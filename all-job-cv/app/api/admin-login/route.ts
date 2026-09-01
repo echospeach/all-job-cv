@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { setAdminSession } from "@/app/lib/adminAuth";
 import { checkRateLimit } from "@/app/lib/rateLimit";
+import { getClientIp } from "@/app/lib/getClientIp";
 import crypto from "crypto";
 
 function safeCompare(a: string, b: string): boolean {
@@ -11,7 +12,7 @@ function safeCompare(a: string, b: string): boolean {
 }
 
 export async function POST(request: Request) {
-  const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
+  const ip = getClientIp(request);
   const { allowed } = await checkRateLimit(`admin-login:${ip}`, 5, 15 * 60);
 
   if (!allowed) {

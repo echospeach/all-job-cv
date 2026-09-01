@@ -2,9 +2,10 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/app/lib/prisma";
 import { checkRateLimit } from "@/app/lib/rateLimit";
+import { getClientIp } from "@/app/lib/getClientIp";
 
 export async function POST(request: Request) {
-  const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
+  const ip = getClientIp(request);
   const { allowed } = await checkRateLimit(`signup:${ip}`, 5, 60 * 60);
 
   if (!allowed) {
@@ -14,6 +15,14 @@ export async function POST(request: Request) {
     );
   }
 
+
+  const { allowed: globalAllowed } = await checkRateLimit("signup:global", 100, 60 * 60);
+  if (!globalAllowed) {
+    return NextResponse.json(
+      { error: "Sign-ups are temporarily limited. Please try again shortly." },
+      { status: 429 }
+    );
+  }
   const body = await request.json();
   const { email, password, name } = body;
 
