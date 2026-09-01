@@ -24,8 +24,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "No file provided" }, { status: 400 });
   }
 
-  if (!file.type.startsWith("image/")) {
-    return NextResponse.json({ error: "File must be an image" }, { status: 400 });
+  const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+  if (!allowedTypes.includes(file.type)) {
+    return NextResponse.json({ error: "File must be a JPEG, PNG, WEBP, or GIF image" }, { status: 400 });
   }
 
   if (file.size > 5 * 1024 * 1024) {

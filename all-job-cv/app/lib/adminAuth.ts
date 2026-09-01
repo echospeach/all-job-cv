@@ -14,7 +14,14 @@ function verify(signed: string): boolean {
   const [value, sig] = signed.split(".");
   if (!value || !sig) return false;
   const expected = crypto.createHmac("sha256", secret).update(value).digest("hex");
-  return crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected));
+  const sigBuf = Buffer.from(sig);
+  const expectedBuf = Buffer.from(expected);
+  if (sigBuf.length !== expectedBuf.length) return false;
+  try {
+    return crypto.timingSafeEqual(sigBuf, expectedBuf);
+  } catch {
+    return false;
+  }
 }
 
 export async function isAdminAuthenticated(): Promise<boolean> {

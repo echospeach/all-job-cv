@@ -1,6 +1,14 @@
 import { NextResponse } from "next/server";
 import { setAdminSession } from "@/app/lib/adminAuth";
 import { checkRateLimit } from "@/app/lib/rateLimit";
+import crypto from "crypto";
+
+function safeCompare(a: string, b: string): boolean {
+  const aBuf = Buffer.from(a);
+  const bBuf = Buffer.from(b);
+  if (aBuf.length !== bBuf.length) return false;
+  return crypto.timingSafeEqual(aBuf, bBuf);
+}
 
 export async function POST(request: Request) {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
@@ -13,7 +21,7 @@ export async function POST(request: Request) {
   const body = await request.json();
   const { password } = body;
 
-  if (password !== process.env.ADMIN_PASSWORD) {
+  if (!password || !safeCompare(password, process.env.ADMIN_PASSWORD || "")) {
     return NextResponse.json({ error: "Incorrect password" }, { status: 401 });
   }
 
