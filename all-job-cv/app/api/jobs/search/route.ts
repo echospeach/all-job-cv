@@ -4,6 +4,11 @@ import { auth } from "@/app/lib/auth";
 import { keywordMatchScore } from "@/app/lib/keywordScore";
 
 export async function GET(request: Request) {
+  const session = await auth();
+  if (!session?.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const { searchParams } = new URL(request.url);
   const keyword = searchParams.get("q") || "";
   const location = searchParams.get("location") || "";
@@ -31,7 +36,6 @@ export async function GET(request: Request) {
     take: 60,
   });
 
-  const session = await auth();
   let latestCv: { content: unknown } | null = null;
 
   if (session?.user?.id) {

@@ -42,7 +42,7 @@ export default async function AccountPage() {
 
         <div className="mt-6 rounded-lg border border-[#D8D3C8] bg-white p-6">
           <p className="mb-3 text-sm font-semibold text-[#202A3C]">Email preferences</p>
-          <EmailPreferenceToggle initialOptOut={user?.emailOptOut ?? false} />
+          <EmailPreferenceToggle initialOptOut={user?.emailOptOut ?? false} initialCountry={user?.country ?? null} />
         </div>
       </div>
     </div>

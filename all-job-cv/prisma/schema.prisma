@@ -19,6 +19,7 @@ model User {
   emailVerified DateTime?
   password      String?
   emailOptOut   Boolean   @default(false)
+  country       String?
   stripeCustomerId     String?
   subscriptionStatus   String?
   subscriptionId       String?

@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { countries } from "@/app/lib/countries";
 
 type Job = { id: string; title: string; company: string };
 
 export default function BroadcastForm({ jobs }: { jobs: Job[] }) {
   const [jobId, setJobId] = useState(jobs[0]?.id || "");
   const [target, setTarget] = useState<"all" | "individual">("all");
+  const [targetCountry, setTargetCountry] = useState("");
   const [email, setEmail] = useState("");
   const [sending, setSending] = useState(false);
   const [result, setResult] = useState("");
@@ -25,6 +27,7 @@ export default function BroadcastForm({ jobs }: { jobs: Job[] }) {
         body: JSON.stringify({
           jobId,
           targetEmail: target === "individual" ? email : undefined,
+          targetCountry: target === "all" && targetCountry ? targetCountry : undefined,
         }),
       });
       const data = await res.json();
@@ -89,6 +92,29 @@ export default function BroadcastForm({ jobs }: { jobs: Job[] }) {
           </button>
         </div>
       </div>
+
+      {target === "all" && (
+        <div>
+          <label className="mb-1 block text-sm font-medium text-[#202A3C]">
+            Filter by country (optional)
+          </label>
+          <select
+            className="input max-w-xs"
+            value={targetCountry}
+            onChange={(e) => setTargetCountry(e.target.value)}
+          >
+            <option value="">All countries</option>
+            {countries.map((c) => (
+              <option key={c.code} value={c.code}>
+                {c.label}
+              </option>
+            ))}
+          </select>
+          <p className="mt-1 text-xs text-[#8B8578]">
+            Only sends to users who have set this country in their account preferences.
+          </p>
+        </div>
+      )}
 
       {target === "individual" && (
         <div>

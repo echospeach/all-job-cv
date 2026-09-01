@@ -42,7 +42,7 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { jobId, targetEmail } = body;
+  const { jobId, targetEmail, targetCountry } = body;
 
   if (!jobId) {
     return NextResponse.json({ error: "jobId is required" }, { status: 400 });
@@ -74,9 +74,12 @@ export async function POST(request: Request) {
     }
   }
 
-  // Broadcast to all opted-in users
+  // Broadcast to all opted-in users, optionally filtered by country
   const recipients = await prisma.user.findMany({
-    where: { emailOptOut: false },
+    where: {
+      emailOptOut: false,
+      ...(targetCountry ? { country: targetCountry } : {}),
+    },
     select: { email: true },
   });
 

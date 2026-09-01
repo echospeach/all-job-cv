@@ -1,5 +1,6 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
+import { auth } from "@/app/lib/auth";
 import { prisma } from "@/app/lib/prisma";
 import { countries } from "@/app/lib/countries";
 
@@ -9,8 +10,13 @@ export default async function JobDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const job = await prisma.job.findUnique({ where: { id } });
+  const session = await auth();
 
+  if (!session?.user) {
+    redirect(`/signin?callbackUrl=/jobs/${id}`);
+  }
+
+  const job = await prisma.job.findUnique({ where: { id } });
   if (!job) notFound();
 
   const countryLabel = countries.find((c) => c.code === job.country)?.label || job.country.toUpperCase();
