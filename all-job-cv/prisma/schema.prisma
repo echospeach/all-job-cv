@@ -135,3 +135,13 @@ model BroadcastLog {
   totalCount Int
   createdAt  DateTime @default(now())
 }
+
+model Feedback {
+  id        String   @id @default(uuid())
+  userId    String?
+  userEmail String?
+  context   String
+  rating    String?
+  message   String?
+  createdAt DateTime @default(now())
+}

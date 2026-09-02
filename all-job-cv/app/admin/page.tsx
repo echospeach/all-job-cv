@@ -79,6 +79,12 @@ export default async function AdminPage() {
               Insights
             </Link>
             <Link
+              href="/admin/feedback"
+              className="rounded-lg border border-[#D8D3C8] bg-white px-4 py-2 text-sm font-medium text-[#202A3C] hover:bg-[#F0EEE8]"
+            >
+              Feedback
+            </Link>
+            <Link
               href="/admin/broadcast"
               className="rounded-lg border border-[#D8D3C8] bg-white px-4 py-2 text-sm font-medium text-[#202A3C] hover:bg-[#F0EEE8]"
             >

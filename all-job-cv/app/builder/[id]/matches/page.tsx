@@ -5,6 +5,7 @@ import { prisma } from "@/app/lib/prisma";
 import { matchJobsForCv, type JobMatch } from "@/app/lib/matchJobs";
 import { checkRateLimit } from "@/app/lib/rateLimit";
 import ApplyButton from "./ApplyButton";
+import FeedbackWidget from "@/app/components/FeedbackWidget";
 
 const CACHE_HOURS = 6;
 
@@ -105,6 +106,10 @@ export default async function MatchesPage({
               <ApplyButton jobId={m.job.id} cvId={cv.id} initiallyApplied={appliedJobIds.has(m.job.id)} />
             </div>
           ))}
+        </div>
+
+        <div className="mt-8">
+          <FeedbackWidget context="job_matches" prompt="Were these matches useful?" />
         </div>
       </div>
     </div>

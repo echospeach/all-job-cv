@@ -8,6 +8,7 @@ export default function Footer() {
         <div className="flex gap-4">
           <Link href="/privacy" className="hover:underline">Privacy Policy</Link>
           <Link href="/terms" className="hover:underline">Terms of Service</Link>
+          <Link href="/feedback" className="hover:underline">Feedback</Link>
         </div>
       </div>
     </footer>
