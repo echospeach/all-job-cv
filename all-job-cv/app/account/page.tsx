@@ -2,14 +2,29 @@ import { requireUser } from "@/app/lib/getSessionUser";
 import { prisma } from "@/app/lib/prisma";
 import SubscribeButton from "./SubscribeButton";
 import EmailPreferenceToggle from "./EmailPreferenceToggle";
+import PaymentSuccessModal from "@/app/components/PaymentSuccessModal";
 
-export default async function AccountPage() {
+export default async function AccountPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ success?: string }>;
+}) {
   const sessionUser = await requireUser();
+  const { success } = await searchParams;
+
   const user = await prisma.user.findUnique({ where: { id: sessionUser.id } });
   const isActive = user?.subscriptionStatus === "active";
 
   return (
     <div className="min-h-screen bg-[#F0EEE8]">
+      {success === "1" && (
+        <PaymentSuccessModal
+          title="You're Premium!"
+          message="Your subscription is active. All 6 templates and unlimited job matching are now unlocked."
+          ctaHref="/my-cvs"
+          ctaLabel="View your CVs"
+        />
+      )}
       <div className="mx-auto max-w-2xl px-6 py-12">
         <p className="mb-1 text-xs font-medium uppercase tracking-widest text-[#3F6C51]">
           Account
