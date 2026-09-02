@@ -16,6 +16,18 @@ export async function POST(request: Request) {
 
   let customerId = user.stripeCustomerId;
 
+  if (customerId) {
+    try {
+      const existing = await stripe.customers.retrieve(customerId);
+      if (existing.deleted) {
+        customerId = null;
+      }
+    } catch {
+      // Customer doesn't exist in this Stripe mode/account - treat as stale
+      customerId = null;
+    }
+  }
+
   if (!customerId) {
     const customer = await stripe.customers.create({
       email: user.email,
@@ -30,13 +42,19 @@ export async function POST(request: Request) {
 
   const origin = request.headers.get("origin") || "http://localhost:3000";
 
-  const checkoutSession = await stripe.checkout.sessions.create({
-    customer: customerId,
-    mode: "subscription",
-    line_items: [{ price: process.env.STRIPE_SUBSCRIPTION_PRICE_ID!, quantity: 1 }],
-    success_url: `${origin}/account?success=1`,
-    cancel_url: `${origin}/account?canceled=1`,
-  });
-
-  return NextResponse.json({ url: checkoutSession.url });
+  try {
+    const checkoutSession = await stripe.checkout.sessions.create({
+      customer: customerId,
+      mode: "subscription",
+      line_items: [{ price: process.env.STRIPE_SUBSCRIPTION_PRICE_ID!, quantity: 1 }],
+      success_url: `${origin}/account?success=1`,
+      cancel_url: `${origin}/account?canceled=1`,
+    });
+    return NextResponse.json({ url: checkoutSession.url });
+  } catch (err) {
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : "Could not start checkout" },
+      { status: 500 }
+    );
+  }
 }
