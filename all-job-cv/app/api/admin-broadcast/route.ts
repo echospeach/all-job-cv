@@ -3,6 +3,7 @@ import { isAdminAuthenticated } from "@/app/lib/adminAuth";
 import { prisma } from "@/app/lib/prisma";
 import { resend } from "@/app/lib/resend";
 import { escapeHtml } from "@/app/lib/escapeHtml";
+import { checkRateLimit } from "@/app/lib/rateLimit";
 
 function buildEmailHtml(job: {
   id: string;
@@ -45,6 +46,11 @@ export async function POST(request: Request) {
   const authenticated = await isAdminAuthenticated();
   if (!authenticated) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { allowed } = await checkRateLimit("admin-broadcast", 20, 60 * 60);
+  if (!allowed) {
+    return NextResponse.json({ error: "Too many broadcasts sent recently. Please wait before sending more." }, { status: 429 });
   }
 
   const body = await request.json();

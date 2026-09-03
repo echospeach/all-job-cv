@@ -23,14 +23,20 @@ export async function POST(request: Request) {
 
   const origin = request.headers.get("origin") || "http://localhost:3000";
 
-  const checkoutSession = await stripe.checkout.sessions.create({
-    mode: "payment",
-    customer_email: session.user.email!,
-    line_items: [{ price: process.env.STRIPE_ONETIME_PRICE_ID!, quantity: 1 }],
-    metadata: { userId: session.user.id, cvId },
-    success_url: `${origin}/builder/${cvId}?unlocked=1`,
-    cancel_url: `${origin}/builder/${cvId}?canceled=1`,
-  });
-
-  return NextResponse.json({ url: checkoutSession.url });
+  try {
+    const checkoutSession = await stripe.checkout.sessions.create({
+      mode: "payment",
+      customer_email: session.user.email!,
+      line_items: [{ price: process.env.STRIPE_ONETIME_PRICE_ID!, quantity: 1 }],
+      metadata: { userId: session.user.id, cvId },
+      success_url: `${origin}/builder/${cvId}?unlocked=1`,
+      cancel_url: `${origin}/builder/${cvId}?canceled=1`,
+    });
+    return NextResponse.json({ url: checkoutSession.url });
+  } catch (err) {
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : "Could not start checkout" },
+      { status: 500 }
+    );
+  }
 }
