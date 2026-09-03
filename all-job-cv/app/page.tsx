@@ -54,6 +54,12 @@ export default function Home() {
               >
                 See matched jobs
               </Link>
+              <Link
+                href="/human-cv-request"
+                className="rounded-lg border border-[#D8D3C8] bg-white px-6 py-3 text-sm font-medium text-[#202A3C] transition hover:border-[#8B8578]"
+              >
+                Get human help
+              </Link>
             </div>
             <p className="mt-4 text-sm text-[#8B8578]">Free to start · ATS-ready PDF</p>
 
