@@ -296,6 +296,9 @@ export default function BuilderForm({
               <Link href={`/builder/${existingCv.id}/matches`} className="text-sm font-medium text-[#3F6C51] hover:underline">
                 See job matches
               </Link>
+              <Link href="/human-cv-request" className="text-sm font-medium text-[#3F6C51] hover:underline">
+                Get human help
+              </Link>
             </div>
           )}
 

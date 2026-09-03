@@ -145,3 +145,14 @@ model Feedback {
   message   String?
   createdAt DateTime @default(now())
 }
+
+model HumanCvRequest {
+  id        String   @id @default(uuid())
+  userId    String?
+  name      String
+  email     String
+  phone     String?
+  message   String
+  status    String   @default("new")
+  createdAt DateTime @default(now())
+}
