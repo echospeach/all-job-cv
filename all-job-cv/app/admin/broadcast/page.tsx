@@ -1,13 +1,8 @@
-import { redirect } from "next/navigation";
 import Link from "next/link";
-import { isAdminAuthenticated } from "@/app/lib/adminAuth";
 import { prisma } from "@/app/lib/prisma";
 import BroadcastForm from "./BroadcastForm";
 
 export default async function BroadcastPage() {
-  const authenticated = await isAdminAuthenticated();
-  if (!authenticated) redirect("/admin-login");
-
   const jobs = await prisma.job.findMany({
     orderBy: { createdAt: "desc" },
     take: 100,
@@ -15,22 +10,14 @@ export default async function BroadcastPage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#F0EEE8]">
-      <div className="mx-auto max-w-2xl px-6 py-12">
-        <Link href="/admin" className="text-sm text-[#8B8578] hover:underline">
-          Back to dashboard
+    <div className="mx-auto max-w-2xl px-8 py-10">
+      <div className="mb-8 flex items-center justify-between">
+        <h1 className="text-2xl font-semibold text-[#202A3C]">Send broadcast</h1>
+        <Link href="/admin/broadcast-history" className="text-sm font-medium text-[#3F6C51] hover:underline">
+          View history
         </Link>
-        <p className="mb-1 mt-3 text-xs font-medium uppercase tracking-widest text-[#3F6C51]">
-          Internal
-        </p>
-        <div className="mb-8 flex items-center justify-between">
-          <h1 className="text-2xl font-semibold text-[#202A3C]">Send broadcast</h1>
-          <Link href="/admin/broadcast-history" className="text-sm font-medium text-[#3F6C51] hover:underline">
-            View history
-          </Link>
-        </div>
-        <BroadcastForm jobs={jobs} />
       </div>
+      <BroadcastForm jobs={jobs} />
     </div>
   );
 }
